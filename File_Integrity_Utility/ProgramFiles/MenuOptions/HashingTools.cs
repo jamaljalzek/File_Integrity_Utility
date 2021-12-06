@@ -12,21 +12,20 @@ namespace FileIntegrityUtility.ProgramFiles
             List<string> fileNamesFollowedByTheirHashes = new List<string>(listOfFullFilePathsInFolder.Length * 2);
             foreach (string currentFullFilePath in listOfFullFilePathsInFolder)
             {
-                Console.Write(currentFullFilePath + "... ");
-                AddCurrentFileNameAndItsHashToList(currentFullFilePath, fileNamesFollowedByTheirHashes);
-                Console.WriteLine("DONE");
+                AddCurrentFilePathAndItsHashToList(currentFullFilePath, fileNamesFollowedByTheirHashes);
             }
             Console.WriteLine("All file hashes generated.");
             return fileNamesFollowedByTheirHashes;
         }
 
 
-        private static void AddCurrentFileNameAndItsHashToList(string currentFullFilePath, List<string> fileNamesFollowedByTheirHashes)
+        private static void AddCurrentFilePathAndItsHashToList(string currentFullFilePath, List<string> fileNamesFollowedByTheirHashes)
         {
+            Console.Write(currentFullFilePath + "... ");
+            fileNamesFollowedByTheirHashes.Add(currentFullFilePath);
             string currentFileHashString = ObtainFileHash(currentFullFilePath);
-            string currentFileNameWithExtension = Path.GetFileName(currentFullFilePath);
-            fileNamesFollowedByTheirHashes.Add(currentFileNameWithExtension);
             fileNamesFollowedByTheirHashes.Add(currentFileHashString);
+            Console.WriteLine("DONE");
         }
 
 

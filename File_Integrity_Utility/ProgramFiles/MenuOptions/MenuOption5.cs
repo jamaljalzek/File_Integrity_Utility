@@ -34,13 +34,15 @@
             {
                 return "NOT EQUIVALENT: both folders have a different number of items.";
             }
-            for (int currentIndex = 0; currentIndex < firstFolderFileNamesFollowedByTheirHashes.Count; ++currentIndex)
+            for (int currentIndex = 1; currentIndex < firstFolderFileNamesFollowedByTheirHashes.Count; currentIndex += 2)
             {
-                string currentFirstFolderItem = firstFolderFileNamesFollowedByTheirHashes[currentIndex];
-                string currentSecondFolderItem = secondFolderFileNamesFollowedByTheirHashes[currentIndex];
-                if (!currentFirstFolderItem.Equals(currentSecondFolderItem))
+                string currentFirstFolderItemHash = firstFolderFileNamesFollowedByTheirHashes[currentIndex];
+                string currentSecondFolderItemHash = secondFolderFileNamesFollowedByTheirHashes[currentIndex];
+                if (!currentFirstFolderItemHash.Equals(currentSecondFolderItemHash))
                 {
-                    return "NOT EQUIVALENT: " + currentFirstFolderItem + " != " + currentSecondFolderItem + ".";
+                    string currentFirstFolderItemName = firstFolderFileNamesFollowedByTheirHashes[currentIndex - 1];
+                    string currentSecondFolderItemName = secondFolderFileNamesFollowedByTheirHashes[currentIndex - 1];
+                    return "NOT EQUIVALENT\n" + currentFirstFolderItemName + " != " + currentSecondFolderItemName + ".";
                 }
             }
             return "EQUIVALENT.";
