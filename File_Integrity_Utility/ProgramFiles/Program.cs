@@ -10,6 +10,8 @@ namespace FileIntegrityUtility.ProgramFiles
             while (userChosenMenuOption != 0)
             {
                 Console.WriteLine();
+                ConsoleTools.WriteLineToConsoleInGivenColor("Menu option " + userChosenMenuOption + ":", ConsoleColor.Magenta);
+                Console.WriteLine();
                 if (userChosenMenuOption == 1)
                 {
                     MenuOption1.DisplayFileNameFollowedByItsHashCode();
@@ -40,12 +42,12 @@ namespace FileIntegrityUtility.ProgramFiles
         {
             DisplayMainMenu();
             Console.WriteLine();
-            Console.Write("Please select an option from the main menu: ");
+            ConsoleTools.WriteToConsoleInGivenColor("Please select an option from the main menu: ", ConsoleColor.Yellow); ;
             int userInputAsInt = AttemptToReadIntFromUser();
             while (userInputAsInt < 0 || userInputAsInt > 5)
             {
-                Console.WriteLine("ERROR, no valid menu option chosen.");
-                Console.Write("Please select an option from the main menu: ");
+                ConsoleTools.WriteLineToConsoleInGivenColor("ERROR, no valid menu option chosen.", ConsoleColor.Red);
+                ConsoleTools.WriteToConsoleInGivenColor("Please select an option from the main menu: ", ConsoleColor.Yellow);
                 userInputAsInt = AttemptToReadIntFromUser();
             }
             return userInputAsInt;
@@ -73,7 +75,7 @@ namespace FileIntegrityUtility.ProgramFiles
         private static int AttemptToReadIntFromUser()
         {
             string userInput = Console.ReadLine();
-            if (userInput.Length == 0)
+            if (userInput == null || userInput.Length == 0)
             {
                 return -1;
             }

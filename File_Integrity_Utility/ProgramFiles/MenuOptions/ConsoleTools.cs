@@ -14,7 +14,7 @@ namespace FileIntegrityUtility.ProgramFiles.MenuOptions
 
         public static string PromptForUserInput(string promptMessage)
         {
-            Console.Write(promptMessage);
+            WriteToConsoleInGivenColor(promptMessage, ConsoleColor.Yellow);
             string userInput = Console.ReadLine();
             // On Windows 11, you can obtain the path of a folder or file easily:
             // 1. Right click the folder or file.
@@ -24,16 +24,33 @@ namespace FileIntegrityUtility.ProgramFiles.MenuOptions
         }
 
 
+        public static void WriteToConsoleInGivenColor(string lineToWrite, ConsoleColor colorToWriteLineIn)
+        {
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.Write(lineToWrite);
+            Console.ResetColor();
+        }
+
+
         public static string ObtainFullFilePathFromUser()
         {
             SetConsoleEncoding();
             string userInput = PromptForUserInput("Please enter the full path of the file to analyze: ");
             while (!File.Exists(userInput))
             {
-                Console.WriteLine("ERROR, no file found with the provided path.");
+                WriteLineToConsoleInGivenColor("ERROR, no file found with the provided path.", ConsoleColor.Red);
+                Console.WriteLine();
                 userInput = PromptForUserInput("Please enter the full path of the file to analyze: ");
             }
             return userInput;
+        }
+
+
+        public static void WriteLineToConsoleInGivenColor(string lineToWrite, ConsoleColor colorToWriteLineIn)
+        {
+            Console.ForegroundColor = colorToWriteLineIn;
+            Console.WriteLine(lineToWrite);
+            Console.ResetColor();
         }
     }
 }

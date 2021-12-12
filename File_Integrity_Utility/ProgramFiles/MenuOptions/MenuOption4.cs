@@ -20,7 +20,8 @@
             string userInput = ConsoleTools.PromptForUserInput("Please enter the full path of the folder to analyze: ");
             while (!Directory.Exists(userInput))
             {
-                Console.WriteLine("ERROR, no folder found with the provided path.");
+                ConsoleTools.WriteLineToConsoleInGivenColor("ERROR, no folder found with the provided path.", ConsoleColor.Red);
+                Console.WriteLine();
                 userInput = ConsoleTools.PromptForUserInput("Please enter the full path of the folder to analyze: ");
             }
             return userInput;
@@ -40,7 +41,7 @@
             }
             AddCurrentFileNameAndItsHashToTextFile(fileNamesFollowedByTheirHashes, indexOfLastFileName, textFileStreamWriter);
             textFileStreamWriter.Close();
-            Console.WriteLine("All file hashes written to file.");
+            ConsoleTools.WriteLineToConsoleInGivenColor("All file hashes written to file.", ConsoleColor.Cyan);
         }
 
 

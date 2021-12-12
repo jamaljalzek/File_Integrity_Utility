@@ -11,8 +11,8 @@
             Console.WriteLine("File hash complete.");
             string currentFileNameWithExtension = Path.GetFileName(fullPathOfFile);
             Console.WriteLine();
-            Console.WriteLine(currentFileNameWithExtension);
-            Console.WriteLine(fileHashString);
+            ConsoleTools.WriteLineToConsoleInGivenColor(currentFileNameWithExtension, ConsoleColor.Cyan);
+            ConsoleTools.WriteLineToConsoleInGivenColor(fileHashString, ConsoleColor.Cyan);
         }
     }
 }

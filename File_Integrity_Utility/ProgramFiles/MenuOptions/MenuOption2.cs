@@ -9,15 +9,17 @@
             Console.WriteLine("Generating hash for given file...");
             string fileHashString = HashingTools.ObtainFileHash(fullPathOfFile);
             Console.WriteLine("File hash complete.");
+            Console.WriteLine();
             string userProvidedHash = ConsoleTools.PromptForUserInput("Please enter the full SHA 256 hash (case-insensitive) to compare against the given file: ");
             Console.WriteLine();
+            Console.WriteLine("VERDICT:");
             if (!fileHashString.Equals(userProvidedHash, StringComparison.CurrentCultureIgnoreCase))
             {
-                Console.WriteLine("VERDICT: NOT EQUIVALENT.");
+                ConsoleTools.WriteLineToConsoleInGivenColor("NOT EQUIVALENT", ConsoleColor.Red);
             }
             else
             {
-                Console.WriteLine("VERDICT: EQUIVALENT.");
+                ConsoleTools.WriteLineToConsoleInGivenColor("EQUIVALENT", ConsoleColor.Green);
             }
         }
     }

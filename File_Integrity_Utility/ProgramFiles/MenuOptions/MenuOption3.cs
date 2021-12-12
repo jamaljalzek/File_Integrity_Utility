@@ -5,6 +5,7 @@
         public static void DisplayIfBothFilesAreEquivalent()
         {
             string fullPathOfFirstFile = ObtainFullFilePathFromUser("first");
+            Console.WriteLine();
             string fullPathOfSecondFile = ObtainFullFilePathFromUser("second");
             Console.WriteLine();
             Console.WriteLine("Generating hashes for both files...");
@@ -12,13 +13,14 @@
             string fileHashOfSecondFile = ObtainHashOfUserChosenFile(fullPathOfSecondFile);
             Console.WriteLine("All file hashes generated.");
             Console.WriteLine();
+            Console.WriteLine("VERDICT:");
             if (!fileHashOfFirstFile.Equals(fileHashOfSecondFile))
             {
-                Console.WriteLine("VERDICT: NOT EQUIVALENT.");
+                ConsoleTools.WriteLineToConsoleInGivenColor("NOT EQUIVALENT", ConsoleColor.Red);
             }
             else
             {
-                Console.WriteLine("VERDICT: EQUIVALENT.");
+                ConsoleTools.WriteLineToConsoleInGivenColor("EQUIVALENT", ConsoleColor.Green);
             }
         }
 
@@ -38,7 +40,8 @@
             string userInput = ConsoleTools.PromptForUserInput("Please enter the full path of the " + firstOrSecond + " file to analyze: ");
             while (!File.Exists(userInput))
             {
-                Console.WriteLine("ERROR, no file found with the provided path.");
+                ConsoleTools.WriteLineToConsoleInGivenColor("ERROR, no file found with the provided path.", ConsoleColor.Red);
+                Console.WriteLine();
                 userInput = ConsoleTools.PromptForUserInput("Please enter the full path of the " + firstOrSecond + " file to analyze: ");
             }
             return userInput;
