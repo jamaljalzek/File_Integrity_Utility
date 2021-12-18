@@ -1,4 +1,4 @@
-﻿namespace FileIntegrityUtility.ProgramFiles.MenuOptions
+﻿namespace File_Integrity_Utility.ProgramFiles.MenuOptions
 {
     public class MenuOption2
     {

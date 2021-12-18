@@ -1,30 +1,16 @@
-﻿namespace FileIntegrityUtility.ProgramFiles.MenuOptions
+﻿namespace File_Integrity_Utility.ProgramFiles.MenuOptions
 {
     class MenuOption4
     {
         public static void GenerateTextFileListingFileNamesFollowedByTheirHashes()
         {
-            string fullPathOfFolder = ObtainFullFolderPathFromUser();
+            string fullPathOfFolder = ConsoleTools.ObtainFullFolderPathFromUser();
             string fullPathOfTextFileToBeCreated = fullPathOfFolder + "\\File SHA 256 Hashes.txt";
             // We do not need to hash any already existing "File SHA 256 Hashes.txt" file, which we will already be replacing:
             File.Delete(fullPathOfTextFileToBeCreated);
             // The format of the below list is that of [file1Name, file1Hash, file2Name, file2Hash, etc.]:
-            List<string> fileNamesFollowedByTheirHashes = HashingTools.GetListOfFileNamesFollowedByTheirHashes(fullPathOfFolder, SearchOption.TopDirectoryOnly);
+            List<string> fileNamesFollowedByTheirHashes = HashingTools.GetListOfFileFullPathsFollowedByTheirHashes(fullPathOfFolder, SearchOption.TopDirectoryOnly);
             WriteListOfFileNamesFollowedByTheirHashesToNewTextFile(fileNamesFollowedByTheirHashes, fullPathOfTextFileToBeCreated);
-        }
-
-
-        private static string ObtainFullFolderPathFromUser()
-        {
-            ConsoleTools.SetConsoleEncoding();
-            string userInput = ConsoleTools.PromptForUserInput("Please enter the full path of the folder to analyze: ");
-            while (!Directory.Exists(userInput))
-            {
-                ConsoleTools.WriteLineToConsoleInGivenColor("ERROR, no folder found with the provided path.", ConsoleColor.Red);
-                Console.WriteLine();
-                userInput = ConsoleTools.PromptForUserInput("Please enter the full path of the folder to analyze: ");
-            }
-            return userInput;
         }
 
 
@@ -47,7 +33,8 @@
 
         private static void AddCurrentFileNameAndItsHashToTextFile(List<string> fileNamesFollowedByTheirHashes, int currentIndex, StreamWriter textFileStreamWriter)
         {
-            string currentFileName = fileNamesFollowedByTheirHashes[currentIndex];
+            string currentFileFullPath = fileNamesFollowedByTheirHashes[currentIndex];
+            string currentFileName = Path.GetFileName(currentFileFullPath);
             textFileStreamWriter.WriteLine(currentFileName);
             string currentFileHash = fileNamesFollowedByTheirHashes[currentIndex + 1];
             textFileStreamWriter.Write(currentFileHash);

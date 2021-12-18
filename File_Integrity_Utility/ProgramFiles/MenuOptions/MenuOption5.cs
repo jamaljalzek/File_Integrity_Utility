@@ -1,4 +1,4 @@
-﻿namespace FileIntegrityUtility.ProgramFiles.MenuOptions
+﻿namespace File_Integrity_Utility.ProgramFiles.MenuOptions
 {
     class MenuOption5
     {
@@ -8,8 +8,8 @@
             Console.WriteLine();
             string fullPathOfSecondFolder = ObtainFullFolderPathFromUser("second");
             // The format of the below list is that of [file1Name, file1Hash, file2Name, file2Hash, etc.]:
-            List<string> firstFolderFileNamesFollowedByTheirHashes = HashingTools.GetListOfFileNamesFollowedByTheirHashes(fullPathOfFirstFolder, SearchOption.AllDirectories);
-            List<string> secondFolderFileNamesFollowedByTheirHashes = HashingTools.GetListOfFileNamesFollowedByTheirHashes(fullPathOfSecondFolder, SearchOption.AllDirectories);
+            List<string> firstFolderFileNamesFollowedByTheirHashes = HashingTools.GetListOfFileFullPathsFollowedByTheirHashes(fullPathOfFirstFolder, SearchOption.AllDirectories);
+            List<string> secondFolderFileNamesFollowedByTheirHashes = HashingTools.GetListOfFileFullPathsFollowedByTheirHashes(fullPathOfSecondFolder, SearchOption.AllDirectories);
             DisplayIfBothListsAreIdentical(firstFolderFileNamesFollowedByTheirHashes, secondFolderFileNamesFollowedByTheirHashes);
         }
 

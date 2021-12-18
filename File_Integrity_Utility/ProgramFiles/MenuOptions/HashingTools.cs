@@ -1,10 +1,10 @@
 ﻿using System.Security.Cryptography;
 
-namespace FileIntegrityUtility.ProgramFiles
+namespace File_Integrity_Utility.ProgramFiles
 {
     class HashingTools
     {
-        public static List<string> GetListOfFileNamesFollowedByTheirHashes(string fullPathOfFolder, SearchOption recursivelySearchOrNot)
+        public static List<string> GetListOfFileFullPathsFollowedByTheirHashes(string fullPathOfFolder, SearchOption recursivelySearchOrNot)
         {
             Console.WriteLine();
             Console.WriteLine("Generating hashes for all files in " + fullPathOfFolder + "...");

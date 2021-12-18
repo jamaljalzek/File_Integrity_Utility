@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace FileIntegrityUtility.ProgramFiles.MenuOptions
+namespace File_Integrity_Utility.ProgramFiles.MenuOptions
 {
     class ConsoleTools
     {
@@ -51,6 +51,20 @@ namespace FileIntegrityUtility.ProgramFiles.MenuOptions
             Console.ForegroundColor = colorToWriteLineIn;
             Console.WriteLine(lineToWrite);
             Console.ResetColor();
+        }
+
+
+        public static string ObtainFullFolderPathFromUser()
+        {
+            ConsoleTools.SetConsoleEncoding();
+            string userInput = ConsoleTools.PromptForUserInput("Please enter the full path of the folder to analyze: ");
+            while (!Directory.Exists(userInput))
+            {
+                ConsoleTools.WriteLineToConsoleInGivenColor("ERROR, no folder found with the provided path.", ConsoleColor.Red);
+                Console.WriteLine();
+                userInput = ConsoleTools.PromptForUserInput("Please enter the full path of the folder to analyze: ");
+            }
+            return userInput;
         }
     }
 }
