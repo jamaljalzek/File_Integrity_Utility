@@ -4,34 +4,40 @@ namespace File_Integrity_Utility.ProgramFiles
 {
     class HashingTools
     {
-        public static List<string> GetListOfFileFullPathsFollowedByTheirHashes(string fullPathOfFolder, SearchOption recursivelySearchOrNot)
+        /// <summary>
+        /// The format of the returned list is that of { [file1Name, file1Hash], [file2Name, file2Hash], etc. }.
+        /// </summary>
+        /// <param name="pathOfFolder"></param>
+        /// <param name="recursivelySearchOrNot"></param>
+        /// <returns></returns>
+        public static List<string[]> GetListOfFilePathsToHashes(string pathOfFolder, SearchOption recursivelySearchOrNot)
         {
-            Console.WriteLine();
-            Console.WriteLine("Generating hashes for all files in " + fullPathOfFolder + "...");
-            string[] listOfFullFilePathsInFolder = Directory.GetFiles(fullPathOfFolder, "*", recursivelySearchOrNot);
-            List<string> fileNamesFollowedByTheirHashes = new List<string>(listOfFullFilePathsInFolder.Length * 2);
-            foreach (string currentFullFilePath in listOfFullFilePathsInFolder)
+            Console.WriteLine("\n" + "Generating hashes for all files in " + pathOfFolder + "...");
+            string[] listOfFilePathsInFolder = Directory.GetFiles(pathOfFolder, "*", recursivelySearchOrNot);
+            List<string[]> listOfFilePathsToHashes = new List<string[]>(listOfFilePathsInFolder.Length);
+            foreach (string currentFilePath in listOfFilePathsInFolder)
             {
-                AddCurrentFilePathAndItsHashToList(currentFullFilePath, fileNamesFollowedByTheirHashes);
+                AddCurrentFilePathAndItsFileHashToList(currentFilePath, listOfFilePathsToHashes);
             }
             Console.WriteLine("All file hashes generated.");
-            return fileNamesFollowedByTheirHashes;
+            return listOfFilePathsToHashes;
         }
 
 
-        private static void AddCurrentFilePathAndItsHashToList(string currentFullFilePath, List<string> fileNamesFollowedByTheirHashes)
+        private static void AddCurrentFilePathAndItsFileHashToList(string currentFilePath, List<string[]> listOfFilePathsToHashes)
         {
-            Console.Write(currentFullFilePath + "... ");
-            fileNamesFollowedByTheirHashes.Add(currentFullFilePath);
-            string currentFileHashString = ObtainFileHash(currentFullFilePath);
-            fileNamesFollowedByTheirHashes.Add(currentFileHashString);
+            Console.Write(currentFilePath + "... ");
+            string[] currentFilePathAndFileHash = new string[2];
+            currentFilePathAndFileHash[0] = currentFilePath;
+            currentFilePathAndFileHash[1] = ObtainFileHash(currentFilePath);
+            listOfFilePathsToHashes.Add(currentFilePathAndFileHash);
             Console.WriteLine("DONE");
         }
 
 
-        public static string ObtainFileHash(string fullPathOfCurrentFile)
+        public static string ObtainFileHash(string pathOfCurrentFile)
         {
-            FileStream currentFileStream = new FileStream(fullPathOfCurrentFile, FileMode.Open);
+            FileStream currentFileStream = new FileStream(pathOfCurrentFile, FileMode.Open);
             SHA256 sha256HashGenerator = SHA256.Create();
             byte[] currentFileHashBytes = sha256HashGenerator.ComputeHash(currentFileStream);
             // We dispose of the currentFileStream now that we are done with it, otherwise if we try to open another FileStream for the same file that is currently in use by the currentFileStream, it will throw an exception:

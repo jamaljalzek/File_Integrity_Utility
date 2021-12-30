@@ -4,55 +4,53 @@
     {
         public static void DisplayIfBothFoldersContainTheSameFilesAndStructure()
         {
-            string fullPathOfFirstFolder = ObtainFullFolderPathFromUser("first");
-            Console.WriteLine();
-            string fullPathOfSecondFolder = ObtainFullFolderPathFromUser("second");
-            // The format of the below list is that of [file1Name, file1Hash, file2Name, file2Hash, etc.]:
-            List<string> firstFolderFileNamesFollowedByTheirHashes = HashingTools.GetListOfFileFullPathsFollowedByTheirHashes(fullPathOfFirstFolder, SearchOption.AllDirectories);
-            List<string> secondFolderFileNamesFollowedByTheirHashes = HashingTools.GetListOfFileFullPathsFollowedByTheirHashes(fullPathOfSecondFolder, SearchOption.AllDirectories);
-            DisplayIfBothListsAreIdentical(firstFolderFileNamesFollowedByTheirHashes, secondFolderFileNamesFollowedByTheirHashes);
+            string pathOfFirstFolder = ObtainFolderPathFromUser("first");
+            string pathOfSecondFolder = ObtainFolderPathFromUser("second");
+            List<string[]> listOfFirstFolderFilePathsToHashes = HashingTools.GetListOfFilePathsToHashes(pathOfFirstFolder, SearchOption.AllDirectories);
+            List<string[]> listOfSecondFolderFilePathsToHashes = HashingTools.GetListOfFilePathsToHashes(pathOfSecondFolder, SearchOption.AllDirectories);
+            DisplayIfBothListsAreIdentical(listOfFirstFolderFilePathsToHashes, listOfSecondFolderFilePathsToHashes);
         }
 
 
-        private static string ObtainFullFolderPathFromUser(string firstOrSecond)
+        private static string ObtainFolderPathFromUser(string firstOrSecond)
         {
-            ConsoleTools.SetConsoleEncoding();
             string userInput = ConsoleTools.PromptForUserInput("Please enter the full path of the " + firstOrSecond + " folder to analyze: ");
             while (!Directory.Exists(userInput))
             {
                 ConsoleTools.WriteLineToConsoleInGivenColor("ERROR, no folder found with the provided path.", ConsoleColor.Red);
-                Console.WriteLine();
-                userInput = ConsoleTools.PromptForUserInput("Please enter the full path of the " + firstOrSecond + " folder to analyze: ");
+                userInput = ConsoleTools.PromptForUserInput("\n" + "Please enter the full path of the " + firstOrSecond + " folder to analyze: ");
             }
+            Console.WriteLine();
             return userInput;
         }
 
 
-        private static void DisplayIfBothListsAreIdentical(List<string> firstFolderFileNamesFollowedByTheirHashes, List<string> secondFolderFileNamesFollowedByTheirHashes)
+        private static void DisplayIfBothListsAreIdentical(List<string[]> listOfFirstFolderFilePathsToHashes, List<string[]> listOfSecondFolderFilePathsToHashes)
         {
-            Console.WriteLine();
-            Console.WriteLine("VERDICT:");
-            if (firstFolderFileNamesFollowedByTheirHashes.Count != secondFolderFileNamesFollowedByTheirHashes.Count)
+            Console.WriteLine("\n" + "VERDICT:");
+            if (listOfFirstFolderFilePathsToHashes.Count != listOfSecondFolderFilePathsToHashes.Count)
             {
                 ConsoleTools.WriteLineToConsoleInGivenColor("NOT EQUIVALENT", ConsoleColor.Red);
-                ConsoleTools.WriteLineToConsoleInGivenColor(firstFolderFileNamesFollowedByTheirHashes.Count + " items != " + secondFolderFileNamesFollowedByTheirHashes.Count + " items", ConsoleColor.Red);
+                ConsoleTools.WriteLineToConsoleInGivenColor(listOfFirstFolderFilePathsToHashes.Count + " items != " + listOfSecondFolderFilePathsToHashes.Count + " items", ConsoleColor.Red);
                 return;
             }
-            DisplayIfFolderContentsAreIdentical(firstFolderFileNamesFollowedByTheirHashes, secondFolderFileNamesFollowedByTheirHashes);
+            DisplayIfListsAreIdentical(listOfFirstFolderFilePathsToHashes, listOfSecondFolderFilePathsToHashes);
         }
 
 
-        private static void DisplayIfFolderContentsAreIdentical(List<string> firstFolderFileNamesFollowedByTheirHashes, List<string> secondFolderFileNamesFollowedByTheirHashes)
+        private static void DisplayIfListsAreIdentical(List<string[]> listOfFirstFolderFilePathsToHashes, List<string[]> listOfSecondFolderFilePathsToHashes)
         {
-            for (int currentIndex = 1; currentIndex < firstFolderFileNamesFollowedByTheirHashes.Count; currentIndex += 2)
+            for (int currentIndex = 0; currentIndex < listOfFirstFolderFilePathsToHashes.Count; ++currentIndex)
             {
-                string currentFirstFolderItemHash = firstFolderFileNamesFollowedByTheirHashes[currentIndex];
-                string currentSecondFolderItemHash = secondFolderFileNamesFollowedByTheirHashes[currentIndex];
-                if (!currentFirstFolderItemHash.Equals(currentSecondFolderItemHash))
+                string[] currentFirstFolderFileNameAndHash = listOfFirstFolderFilePathsToHashes[currentIndex];
+                string[] currentSecondFolderFileNameAndHash = listOfSecondFolderFilePathsToHashes[currentIndex];
+                string currentFirstFolderFileHash = currentFirstFolderFileNameAndHash[1];
+                string currentSecondFolderFileHash = currentSecondFolderFileNameAndHash[1];
+                if (!currentFirstFolderFileHash.Equals(currentSecondFolderFileHash))
                 {
-                    string currentFirstFolderItemName = firstFolderFileNamesFollowedByTheirHashes[currentIndex - 1];
-                    string currentSecondFolderItemName = secondFolderFileNamesFollowedByTheirHashes[currentIndex - 1];
-                    ConsoleTools.WriteLineToConsoleInGivenColor("NOT EQUIVALENT\n" + currentFirstFolderItemName + " != " + currentSecondFolderItemName, ConsoleColor.Red);
+                    string currentFirstFolderFileName = currentFirstFolderFileNameAndHash[0];
+                    string currentSecondFolderFileName = currentSecondFolderFileNameAndHash[0];
+                    ConsoleTools.WriteLineToConsoleInGivenColor("NOT EQUIVALENT:" + "\n" + currentFirstFolderFileName + " != " + currentSecondFolderFileName, ConsoleColor.Red);
                     return;
                 }
             }

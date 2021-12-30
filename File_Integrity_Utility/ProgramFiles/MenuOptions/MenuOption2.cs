@@ -4,15 +4,12 @@
     {
         public static void DisplayIfFileHashMatchesProvidedHash()
         {
-            string fullPathOfFile = ConsoleTools.ObtainFullFilePathFromUser();
-            Console.WriteLine();
-            Console.WriteLine("Generating hash for given file...");
-            string fileHashString = HashingTools.ObtainFileHash(fullPathOfFile);
-            Console.WriteLine("File hash complete.");
-            Console.WriteLine();
+            string pathOfFile = ConsoleTools.ObtainFilePathFromUser();
+            Console.WriteLine("\n" + "Generating hash for given file...");
+            string fileHashString = HashingTools.ObtainFileHash(pathOfFile);
+            Console.WriteLine("File hash complete." + "\n");
             string userProvidedHash = ConsoleTools.PromptForUserInput("Please enter the full SHA 256 hash (case-insensitive) to compare against the given file: ");
-            Console.WriteLine();
-            Console.WriteLine("VERDICT:");
+            Console.WriteLine("\n" + "VERDICT:");
             if (!fileHashString.Equals(userProvidedHash, StringComparison.CurrentCultureIgnoreCase))
             {
                 ConsoleTools.WriteLineToConsoleInGivenColor("NOT EQUIVALENT", ConsoleColor.Red);

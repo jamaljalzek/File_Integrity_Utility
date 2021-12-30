@@ -6,8 +6,7 @@ namespace File_Integrity_Utility.ProgramFiles.MenuOptions
     {
         public static void SetConsoleEncoding()
         {
-            // In order to support a range of folder and file names, such as ones containing emojis (ex. ☺), we must parse the input as Unicode (UTF-16).
-            // UTF-8 does not work:
+            // In order to support a range of folder and file names, such as ones containing emojis (ex. ☺), we must parse the input as Unicode (UTF-16). UTF-8 does not work:
             Console.InputEncoding = Encoding.Unicode;
         }
 
@@ -24,23 +23,21 @@ namespace File_Integrity_Utility.ProgramFiles.MenuOptions
         }
 
 
-        public static void WriteToConsoleInGivenColor(string lineToWrite, ConsoleColor colorToWriteLineIn)
+        public static void WriteToConsoleInGivenColor(string lineToWrite, ConsoleColor colorToWriteIn)
         {
-            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.ForegroundColor = colorToWriteIn;
             Console.Write(lineToWrite);
             Console.ResetColor();
         }
 
 
-        public static string ObtainFullFilePathFromUser()
+        public static string ObtainFilePathFromUser()
         {
-            SetConsoleEncoding();
             string userInput = PromptForUserInput("Please enter the full path of the file to analyze: ");
             while (!File.Exists(userInput))
             {
                 WriteLineToConsoleInGivenColor("ERROR, no file found with the provided path.", ConsoleColor.Red);
-                Console.WriteLine();
-                userInput = PromptForUserInput("Please enter the full path of the file to analyze: ");
+                userInput = PromptForUserInput("\n" + "Please enter the full path of the file to analyze: ");
             }
             return userInput;
         }
@@ -48,21 +45,18 @@ namespace File_Integrity_Utility.ProgramFiles.MenuOptions
 
         public static void WriteLineToConsoleInGivenColor(string lineToWrite, ConsoleColor colorToWriteLineIn)
         {
-            Console.ForegroundColor = colorToWriteLineIn;
-            Console.WriteLine(lineToWrite);
-            Console.ResetColor();
+            WriteToConsoleInGivenColor(lineToWrite, colorToWriteLineIn);
+            Console.WriteLine();
         }
 
 
-        public static string ObtainFullFolderPathFromUser()
+        public static string ObtainFolderPathFromUser()
         {
-            ConsoleTools.SetConsoleEncoding();
-            string userInput = ConsoleTools.PromptForUserInput("Please enter the full path of the folder to analyze: ");
+            string userInput = PromptForUserInput("Please enter the full path of the folder to analyze: ");
             while (!Directory.Exists(userInput))
             {
-                ConsoleTools.WriteLineToConsoleInGivenColor("ERROR, no folder found with the provided path.", ConsoleColor.Red);
-                Console.WriteLine();
-                userInput = ConsoleTools.PromptForUserInput("Please enter the full path of the folder to analyze: ");
+                WriteLineToConsoleInGivenColor("ERROR, no folder found with the provided path.", ConsoleColor.Red);
+                userInput = PromptForUserInput("\n" + "Please enter the full path of the folder to analyze: ");
             }
             return userInput;
         }

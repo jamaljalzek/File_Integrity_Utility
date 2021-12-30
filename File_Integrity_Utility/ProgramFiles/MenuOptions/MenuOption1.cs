@@ -2,15 +2,13 @@
 {
     class MenuOption1
     {
-        public static void DisplayFileNameFollowedByItsHashCode()
+        public static void DisplayFileNameFollowedByItsHash()
         {
-            string fullPathOfFile = ConsoleTools.ObtainFullFilePathFromUser();
-            Console.WriteLine();
-            Console.WriteLine("Generating hash for given file...");
-            string fileHashString = HashingTools.ObtainFileHash(fullPathOfFile);
-            Console.WriteLine("File hash complete.");
-            string currentFileNameWithExtension = Path.GetFileName(fullPathOfFile);
-            Console.WriteLine();
+            string pathOfFile = ConsoleTools.ObtainFilePathFromUser();
+            Console.WriteLine("\n" + "Generating hash for given file...");
+            string fileHashString = HashingTools.ObtainFileHash(pathOfFile);
+            Console.WriteLine("File hash complete." + "\n");
+            string currentFileNameWithExtension = Path.GetFileName(pathOfFile);
             ConsoleTools.WriteLineToConsoleInGivenColor(currentFileNameWithExtension, ConsoleColor.Cyan);
             ConsoleTools.WriteLineToConsoleInGivenColor(fileHashString, ConsoleColor.Cyan);
         }

@@ -2,19 +2,16 @@
 {
     class MenuOption3
     {
-        public static void DisplayIfBothFilesAreEquivalent()
+        public static void DisplayIfBothFilesAreIdentical()
         {
-            string fullPathOfFirstFile = ObtainFullFilePathFromUser("first");
-            Console.WriteLine();
-            string fullPathOfSecondFile = ObtainFullFilePathFromUser("second");
-            Console.WriteLine();
+            string fullPathOfFirstFile = ObtainFilePathFromUser("first");
+            string fullPathOfSecondFile = ObtainFilePathFromUser("second");
             Console.WriteLine("Generating hashes for both files...");
-            string fileHashOfFirstFile = ObtainHashOfUserChosenFile(fullPathOfFirstFile);
-            string fileHashOfSecondFile = ObtainHashOfUserChosenFile(fullPathOfSecondFile);
+            string hashOfFirstFile = ObtainHashOfUserChosenFile(fullPathOfFirstFile);
+            string hashOfSecondFile = ObtainHashOfUserChosenFile(fullPathOfSecondFile);
             Console.WriteLine("All file hashes generated.");
-            Console.WriteLine();
-            Console.WriteLine("VERDICT:");
-            if (!fileHashOfFirstFile.Equals(fileHashOfSecondFile))
+            Console.WriteLine("\n" + "VERDICT:");
+            if (!hashOfFirstFile.Equals(hashOfSecondFile))
             {
                 ConsoleTools.WriteLineToConsoleInGivenColor("NOT EQUIVALENT", ConsoleColor.Red);
             }
@@ -25,25 +22,24 @@
         }
 
 
-        private static string ObtainHashOfUserChosenFile(string fullPathOfFile)
+        private static string ObtainHashOfUserChosenFile(string pathOfFile)
         {
-            Console.Write(fullPathOfFile + "... ");
-            string hashOfFile = HashingTools.ObtainFileHash(fullPathOfFile);
+            Console.Write(pathOfFile + "... ");
+            string hashOfFile = HashingTools.ObtainFileHash(pathOfFile);
             Console.WriteLine("DONE");
             return hashOfFile;
         }
 
 
-        private static string ObtainFullFilePathFromUser(string firstOrSecond)
+        private static string ObtainFilePathFromUser(string firstOrSecond)
         {
-            ConsoleTools.SetConsoleEncoding();
             string userInput = ConsoleTools.PromptForUserInput("Please enter the full path of the " + firstOrSecond + " file to analyze: ");
             while (!File.Exists(userInput))
             {
                 ConsoleTools.WriteLineToConsoleInGivenColor("ERROR, no file found with the provided path.", ConsoleColor.Red);
-                Console.WriteLine();
-                userInput = ConsoleTools.PromptForUserInput("Please enter the full path of the " + firstOrSecond + " file to analyze: ");
+                userInput = ConsoleTools.PromptForUserInput("\n" + "Please enter the full path of the " + firstOrSecond + " file to analyze: ");
             }
+            Console.WriteLine();
             return userInput;
         }
     }
