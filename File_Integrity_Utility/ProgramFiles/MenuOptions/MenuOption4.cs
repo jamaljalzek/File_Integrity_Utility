@@ -2,42 +2,28 @@
 {
     class MenuOption4
     {
-        public static void GenerateTextFileListingFileNamesToHashes()
+        public static void RenameAllTopLevelFilesInGivenFolderAsTheirHash()
         {
-            string pathOfFolder = ConsoleTools.ObtainFolderPathFromUser();
-            string pathOfTextFileToBeCreated = pathOfFolder + "\\File SHA 256 Hashes.txt";
-            // We do not need to hash any already existing "File SHA 256 Hashes.txt" file, which we will already be replacing:
-            File.Delete(pathOfTextFileToBeCreated);
-            List<string[]> listOfFilePathsToHashes = HashingTools.GetListOfFilePathsToHashes(pathOfFolder, SearchOption.TopDirectoryOnly);
-            WriteListOfFileNamesToHashesToNewTextFile(listOfFilePathsToHashes, pathOfTextFileToBeCreated);
-        }
-
-
-        private static void WriteListOfFileNamesToHashesToNewTextFile(List<string[]> listOfFilePathsToHashes, string pathOfTextFile)
-        {
-            Console.WriteLine("\n" + "Writing file hashes to file...");
-            StreamWriter textFileStreamWriter = File.CreateText(pathOfTextFile);
-            int lastIndex = listOfFilePathsToHashes.Count - 1;
-            for (int currentIndex = 0; currentIndex < lastIndex; ++currentIndex)
+            string pathOfGivenFolder = ConsoleTools.ObtainFolderPathFromUser();
+            string[] allTopLevelFilePathsInGivenFolder = Directory.GetFiles(pathOfGivenFolder);
+            foreach (string currentFilePath in allTopLevelFilePathsInGivenFolder)
             {
-                string[] currentFilePathAndFileHash = listOfFilePathsToHashes[currentIndex];
-                AddCurrentFileNameAndItsFileHashToTextFile(currentFilePathAndFileHash, textFileStreamWriter);
-                textFileStreamWriter.Write("\n\n");
+                RenameGivenFileAsItsHash(currentFilePath);
             }
-            string[] lastFilesPathAndHash = listOfFilePathsToHashes[lastIndex];
-            AddCurrentFileNameAndItsFileHashToTextFile(lastFilesPathAndHash, textFileStreamWriter);
-            textFileStreamWriter.Close();
-            ConsoleTools.WriteLineToConsoleInGivenColor("All file hashes written to file.", ConsoleColor.Cyan);
         }
 
 
-        private static void AddCurrentFileNameAndItsFileHashToTextFile(string[] currentFilePathAndFileHash, StreamWriter textFileStreamWriter)
+        private static void RenameGivenFileAsItsHash(string currentFilePath)
         {
-            string currentFilePath = currentFilePathAndFileHash[0];
-            string currentFileName = Path.GetFileName(currentFilePath);
-            textFileStreamWriter.WriteLine(currentFileName);
-            string currentFileHash = currentFilePathAndFileHash[1];
-            textFileStreamWriter.Write(currentFileHash);
+            // We know currentFilePath will not be null, so we suppress the warning below:
+            #pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
+            string currentFileFolderPath = Path.GetDirectoryName(currentFilePath);
+            #pragma warning restore CS8600
+            string currentFileHash = HashingTools.ObtainFileHash(currentFilePath);
+            string currentFileExtension = Path.GetExtension(currentFilePath);
+            string currentFileNewPath = currentFileFolderPath + Path.DirectorySeparatorChar + currentFileHash + currentFileExtension;
+            // Because we are not changing the destination folder, the current file will not be physically moved on the disk that it is on. Instead, it will simply be renamed:
+            File.Move(currentFilePath, currentFileNewPath);
         }
     }
 }

@@ -44,7 +44,7 @@ namespace File_Integrity_Utility.ProgramFiles
             currentFileStream.Dispose();
             string currentFileHashString = BitConverter.ToString(currentFileHashBytes);
             currentFileHashString = currentFileHashString.Replace("-", "");
-            return currentFileHashString;
+            return currentFileHashString.ToLower();
         }
     }
 }
