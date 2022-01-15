@@ -34,11 +34,11 @@
                 ConsoleTools.WriteLineToConsoleInGivenColor(listOfFirstFolderFilePathsToHashes.Count + " items != " + listOfSecondFolderFilePathsToHashes.Count + " items", ConsoleColor.Red);
                 return;
             }
-            DisplayIfListsAreIdentical(listOfFirstFolderFilePathsToHashes, listOfSecondFolderFilePathsToHashes);
+            DisplayIfBothListsContainSameContents(listOfFirstFolderFilePathsToHashes, listOfSecondFolderFilePathsToHashes);
         }
 
 
-        private static void DisplayIfListsAreIdentical(List<string[]> listOfFirstFolderFilePathsToHashes, List<string[]> listOfSecondFolderFilePathsToHashes)
+        private static void DisplayIfBothListsContainSameContents(List<string[]> listOfFirstFolderFilePathsToHashes, List<string[]> listOfSecondFolderFilePathsToHashes)
         {
             for (int currentIndex = 0; currentIndex < listOfFirstFolderFilePathsToHashes.Count; ++currentIndex)
             {

@@ -4,14 +4,14 @@
     {
         public static void CompareHashesOfFilesInGivenFolderToRecordedHashesInTextFile()
         {
-            string pathOfFolder = ConsoleTools.ObtainFolderPathFromUser();
-            string pathOfTextFileContainingFileNamesAndHashes = pathOfFolder + "\\File SHA 256 Hashes.txt";
+            string pathOfGivenFolder = ConsoleTools.ObtainFolderPathFromUser();
+            string pathOfTextFileContainingFileNamesAndHashes = pathOfGivenFolder + "\\File SHA 256 Hashes.txt";
             if (!File.Exists(pathOfTextFileContainingFileNamesAndHashes))
             {
                 ConsoleTools.WriteLineToConsoleInGivenColor("\n" + "ERROR: 'File SHA 256 Hashes.txt' was not found in the given folder.", ConsoleColor.Red);
                 return;
             }
-            List<string[]> listOfFilePathsToHashes = HashingTools.GetListOfFilePathsToHashes(pathOfFolder, SearchOption.TopDirectoryOnly);
+            List<string[]> listOfFilePathsToHashes = HashingTools.GetListOfFilePathsToHashes(pathOfGivenFolder, SearchOption.TopDirectoryOnly);
             // There is no need to consider the .txt file containing hashes itself, so we remove its full path and hash from our list:
             RemoveSha256HashesTextFileNameAndHashFromList(pathOfTextFileContainingFileNamesAndHashes, listOfFilePathsToHashes);
             Dictionary<string, string> recordedFileNamesToHashes = GetMapOfRecordedFilePathsToHashes(pathOfTextFileContainingFileNamesAndHashes);
@@ -48,10 +48,13 @@
             StreamReader textFileStreamReader = File.OpenText(fullPathOfTextFileContainingFileNamesAndTheirHashes);
             while (!textFileStreamReader.EndOfStream)
             {
-                string currentFileNameRecordedInTextFile = textFileStreamReader.ReadLine();
-                string currentFileHashRecordedInTextFile = textFileStreamReader.ReadLine();
-                recordedFileNamesToHashes[currentFileNameRecordedInTextFile] = currentFileHashRecordedInTextFile;
-                // Each (file name, file hash) entry in the .txt file is spaced out with a new line, so we must skip it:
+                string? currentFileNameRecordedInTextFile = textFileStreamReader.ReadLine();
+                string? currentFileHashRecordedInTextFile = textFileStreamReader.ReadLine();
+                if (currentFileNameRecordedInTextFile != null && currentFileHashRecordedInTextFile != null)
+                {
+                    recordedFileNamesToHashes[currentFileNameRecordedInTextFile] = currentFileHashRecordedInTextFile;
+                }
+                // Each (file name, file hash) entry in the .txt file is spaced out with an empty line, so we must skip it:
                 textFileStreamReader.ReadLine();
             }
             textFileStreamReader.Close();
@@ -62,22 +65,27 @@
         private static void CompareListOfFileNamesAndHashesToRecordedFileNamesAndHashes(List<string[]> listOfFilePathsToHashes, Dictionary<string, string> recordedFileNamesToHashes)
         {
             Console.WriteLine("\n" + "Comparing file names and hashes with those in text file...");
+            bool wasAnyInconsistencyFound = false;
             foreach (string[] currentFilePathAndItsHash in listOfFilePathsToHashes)
             {
-                CompareCurrentFileNameAndHashToRecordedFileNameAndHash(currentFilePathAndItsHash, recordedFileNamesToHashes);
+                bool isCurrentFileConsistent = DoesCurrentFileNameAndHashMatchRecordedFileNameAndHash(currentFilePathAndItsHash, recordedFileNamesToHashes);
+                if (!isCurrentFileConsistent)
+                {
+                    wasAnyInconsistencyFound = true;
+                }
             }
-            ConsoleTools.WriteLineToConsoleInGivenColor("Comparing complete.", ConsoleColor.Cyan);
+            DisplayResult(wasAnyInconsistencyFound);
         }
 
 
-        private static void CompareCurrentFileNameAndHashToRecordedFileNameAndHash(string[] currentFilePathAndHash, Dictionary<string, string> recordedFileNamesToHashes)
+        private static bool DoesCurrentFileNameAndHashMatchRecordedFileNameAndHash(string[] currentFilePathAndHash, Dictionary<string, string> recordedFileNamesToHashes)
         {
             string currentFilePath = currentFilePathAndHash[0];
             string currentFileName = Path.GetFileName(currentFilePath);
             if (!recordedFileNamesToHashes.ContainsKey(currentFileName))
             {
                 ConsoleTools.WriteLineToConsoleInGivenColor("ERROR: " + currentFileName + " was not found in File SHA 256 Hashes.txt.", ConsoleColor.Red);
-                return;
+                return false;
             }
             string currentFileRecentHash = currentFilePathAndHash[1];
             string currentRecordedFileHash = recordedFileNamesToHashes[currentFileName];
@@ -86,6 +94,23 @@
                 ConsoleTools.WriteLineToConsoleInGivenColor("ERROR: hash for " + currentFileName + " does NOT match associated hash in File SHA 256 Hashes.txt:", ConsoleColor.Red);
                 ConsoleTools.WriteLineToConsoleInGivenColor("Recent file hash: " + currentFileRecentHash, ConsoleColor.Red);
                 ConsoleTools.WriteLineToConsoleInGivenColor("File SHA 256 Hashes.txt hash: " + currentRecordedFileHash, ConsoleColor.Red);
+                return false;
+            }
+            return true;
+        }
+
+
+        private static void DisplayResult(bool wasAnyInconsistencyFound)
+        {
+            ConsoleTools.WriteToConsoleInGivenColor("Comparing complete.", ConsoleColor.Cyan);
+            Console.WriteLine('\n' + "VERDICT:");
+            if (wasAnyInconsistencyFound)
+            {
+                ConsoleTools.WriteLineToConsoleInGivenColor("INCONSISTENCY(S) FOUND", ConsoleColor.Red);
+            }
+            else
+            {
+                ConsoleTools.WriteLineToConsoleInGivenColor("NO INCONSISTENCIES FOUND", ConsoleColor.Green);
             }
         }
     }
