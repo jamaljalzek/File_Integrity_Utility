@@ -13,7 +13,7 @@ namespace File_Integrity_Utility.ProgramFiles.MenuOptions
 
         public static string PromptForUserInput(string promptMessage)
         {
-            WriteToConsoleInGivenColor(promptMessage, ConsoleColor.Yellow);
+            WriteToConsoleInColor(promptMessage, ConsoleColor.Yellow);
             string userInput = Console.ReadLine();
             // On Windows 11, you can obtain the path of a folder or file easily:
             // 1. Right click the folder or file.
@@ -23,7 +23,7 @@ namespace File_Integrity_Utility.ProgramFiles.MenuOptions
         }
 
 
-        public static void WriteToConsoleInGivenColor(string lineToWrite, ConsoleColor colorToWriteIn)
+        public static void WriteToConsoleInColor(string lineToWrite, ConsoleColor colorToWriteIn)
         {
             Console.ForegroundColor = colorToWriteIn;
             Console.Write(lineToWrite);
@@ -36,16 +36,16 @@ namespace File_Integrity_Utility.ProgramFiles.MenuOptions
             string userInput = PromptForUserInput("Please enter the full path of the file to analyze: ");
             while (!File.Exists(userInput))
             {
-                WriteLineToConsoleInGivenColor("ERROR, no file found with the provided path.", ConsoleColor.Red);
+                WriteLineToConsoleInColor("Error, no file found with the provided path.", ConsoleColor.Red);
                 userInput = PromptForUserInput("\n" + "Please enter the full path of the file to analyze: ");
             }
             return userInput;
         }
 
 
-        public static void WriteLineToConsoleInGivenColor(string lineToWrite, ConsoleColor colorToWriteLineIn)
+        public static void WriteLineToConsoleInColor(string lineToWrite, ConsoleColor colorToWriteLineIn)
         {
-            WriteToConsoleInGivenColor(lineToWrite, colorToWriteLineIn);
+            WriteToConsoleInColor(lineToWrite, colorToWriteLineIn);
             Console.WriteLine();
         }
 
@@ -55,7 +55,7 @@ namespace File_Integrity_Utility.ProgramFiles.MenuOptions
             string userInput = PromptForUserInput("Please enter the full path of the folder to analyze: ");
             while (!Directory.Exists(userInput))
             {
-                WriteLineToConsoleInGivenColor("ERROR, no folder found with the provided path.", ConsoleColor.Red);
+                WriteLineToConsoleInColor("Error, no folder found with the provided path.", ConsoleColor.Red);
                 userInput = PromptForUserInput("\n" + "Please enter the full path of the folder to analyze: ");
             }
             return userInput;

@@ -9,14 +9,14 @@
             string fileHashString = HashingTools.ObtainFileHash(pathOfFile);
             Console.WriteLine("File hash complete." + "\n");
             string userProvidedHash = ConsoleTools.PromptForUserInput("Please enter the full SHA 256 hash (case-insensitive) to compare against the given file: ");
-            Console.WriteLine("\n" + "VERDICT:");
-            if (!fileHashString.Equals(userProvidedHash, StringComparison.CurrentCultureIgnoreCase))
+            Console.WriteLine("\n" + "Verdict:");
+            if (fileHashString.Equals(userProvidedHash, StringComparison.CurrentCultureIgnoreCase))
             {
-                ConsoleTools.WriteLineToConsoleInGivenColor("NOT EQUIVALENT", ConsoleColor.Red);
+                ConsoleTools.WriteLineToConsoleInColor("Equivalent", ConsoleColor.Green);
             }
             else
             {
-                ConsoleTools.WriteLineToConsoleInGivenColor("EQUIVALENT", ConsoleColor.Green);
+                ConsoleTools.WriteLineToConsoleInColor("Not equivalent", ConsoleColor.Red);
             }
         }
     }

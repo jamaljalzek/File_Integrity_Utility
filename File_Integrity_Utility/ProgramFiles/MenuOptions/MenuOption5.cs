@@ -5,39 +5,40 @@
         public static void GenerateTextFileListingFileNamesToHashes()
         {
             string pathOfFolder = ConsoleTools.ObtainFolderPathFromUser();
-            string pathOfTextFileToBeCreated = pathOfFolder + "\\File SHA 256 Hashes.txt";
-            // We do not need to hash any already existing "File SHA 256 Hashes.txt" file, which we will already be replacing:
-            File.Delete(pathOfTextFileToBeCreated);
             List<string[]> listOfFilePathsToHashes = HashingTools.GetListOfFilePathsToHashes(pathOfFolder, SearchOption.TopDirectoryOnly);
-            WriteListOfFileNamesToHashesToNewTextFile(listOfFilePathsToHashes, pathOfTextFileToBeCreated);
+            string pathOfTextFileToBeCreated = pathOfFolder + Path.DirectorySeparatorChar + "File SHA 256 Hashes.txt";
+            // We will be replacing any already existing hashes text file with an up to date one.
+            // Also, we must delete it now (if any) to prevent unnecessarily hashing it:
+            File.Delete(pathOfTextFileToBeCreated);
+            StreamWriter textFileToWriteTo = File.CreateText(pathOfTextFileToBeCreated);
+            WriteListOfFileNamesToHashesToTextFile(listOfFilePathsToHashes, textFileToWriteTo);
+            textFileToWriteTo.Close();
         }
 
 
-        private static void WriteListOfFileNamesToHashesToNewTextFile(List<string[]> listOfFilePathsToHashes, string pathOfTextFile)
+        private static void WriteListOfFileNamesToHashesToTextFile(List<string[]> listOfFilePathsToHashes, StreamWriter textFileWriter)
         {
-            Console.WriteLine("\n" + "Writing file hashes to file...");
-            StreamWriter textFileStreamWriter = File.CreateText(pathOfTextFile);
+            Console.WriteLine("\n" + "Writing file hashes to text file...");
             int lastIndex = listOfFilePathsToHashes.Count - 1;
             for (int currentIndex = 0; currentIndex < lastIndex; ++currentIndex)
             {
-                string[] currentFilePathAndFileHash = listOfFilePathsToHashes[currentIndex];
-                AddCurrentFileNameAndItsFileHashToTextFile(currentFilePathAndFileHash, textFileStreamWriter);
-                textFileStreamWriter.Write("\n\n");
+                string[] currentFilePathAndHash = listOfFilePathsToHashes[currentIndex];
+                AddFileNameAndHashToTextFile(currentFilePathAndHash, textFileWriter);
+                textFileWriter.Write("\n\n");
             }
-            string[] lastFilesPathAndHash = listOfFilePathsToHashes[lastIndex];
-            AddCurrentFileNameAndItsFileHashToTextFile(lastFilesPathAndHash, textFileStreamWriter);
-            textFileStreamWriter.Close();
-            ConsoleTools.WriteLineToConsoleInGivenColor("All file hashes written to file.", ConsoleColor.Cyan);
+            string[] lastFilePathAndHash = listOfFilePathsToHashes[lastIndex];
+            AddFileNameAndHashToTextFile(lastFilePathAndHash, textFileWriter);
+            ConsoleTools.WriteLineToConsoleInColor("All file hashes written to text file.", ConsoleColor.Cyan);
         }
 
 
-        private static void AddCurrentFileNameAndItsFileHashToTextFile(string[] currentFilePathAndFileHash, StreamWriter textFileStreamWriter)
+        private static void AddFileNameAndHashToTextFile(string[] filePathAndHash, StreamWriter textFileToWriteTo)
         {
-            string currentFilePath = currentFilePathAndFileHash[0];
-            string currentFileName = Path.GetFileName(currentFilePath);
-            textFileStreamWriter.WriteLine(currentFileName);
-            string currentFileHash = currentFilePathAndFileHash[1];
-            textFileStreamWriter.Write(currentFileHash);
+            string filePath = filePathAndHash[0];
+            string fileName = Path.GetFileName(filePath);
+            textFileToWriteTo.WriteLine(fileName);
+            string fileHash = filePathAndHash[1];
+            textFileToWriteTo.Write(fileHash);
         }
     }
 }

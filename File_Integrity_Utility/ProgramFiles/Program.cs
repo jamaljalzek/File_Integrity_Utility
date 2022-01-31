@@ -10,7 +10,7 @@ namespace File_Integrity_Utility.ProgramFiles
             int userChosenMenuOption = ObtainMenuOptionFromUser();
             while (userChosenMenuOption != 0)
             {
-                ConsoleTools.WriteLineToConsoleInGivenColor("\n" + "Menu option " + userChosenMenuOption + ":" + "\n", ConsoleColor.Magenta);
+                ConsoleTools.WriteLineToConsoleInColor("\n" + "Menu option " + userChosenMenuOption + ":" + "\n", ConsoleColor.Magenta);
                 if (userChosenMenuOption == 1)
                 {
                     MenuOption1.DisplayFileNameFollowedByItsHash();
@@ -48,12 +48,12 @@ namespace File_Integrity_Utility.ProgramFiles
         private static int ObtainMenuOptionFromUser()
         {
             DisplayMainMenu();
-            ConsoleTools.WriteToConsoleInGivenColor("\n" + "Please select an option from the main menu: ", ConsoleColor.Yellow); ;
+            ConsoleTools.WriteToConsoleInColor("\n" + "Please select an option from the main menu: ", ConsoleColor.Yellow); ;
             int userInputAsInt = AttemptToReadIntFromUser();
             while (userInputAsInt < 0 || userInputAsInt > 7)
             {
-                ConsoleTools.WriteLineToConsoleInGivenColor("ERROR, no valid menu option chosen.", ConsoleColor.Red);
-                ConsoleTools.WriteToConsoleInGivenColor("\n" + "Please select an option from the main menu: ", ConsoleColor.Yellow);
+                ConsoleTools.WriteLineToConsoleInColor("Error, no valid menu option chosen.", ConsoleColor.Red);
+                ConsoleTools.WriteToConsoleInColor("\n" + "Please select an option from the main menu: ", ConsoleColor.Yellow);
                 userInputAsInt = AttemptToReadIntFromUser();
             }
             return userInputAsInt;

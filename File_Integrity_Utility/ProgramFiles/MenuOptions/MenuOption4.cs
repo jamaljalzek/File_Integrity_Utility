@@ -4,32 +4,37 @@
     {
         public static void RenameAllTopLevelFilesInGivenFolderAsTheirHash()
         {
-            string pathOfGivenFolder = ConsoleTools.ObtainFolderPathFromUser();
-            Console.WriteLine('\n' + "Renaming all top level files in " + pathOfGivenFolder + "...");
-            string[] allTopLevelFilePathsInGivenFolder = Directory.GetFiles(pathOfGivenFolder);
-            foreach (string currentFilePath in allTopLevelFilePathsInGivenFolder)
+            string pathOfFolder = ConsoleTools.ObtainFolderPathFromUser();
+            Console.WriteLine('\n' + "Renaming all top level files in " + pathOfFolder + "...");
+            string[] allTopLevelFilePathsInFolder = Directory.GetFiles(pathOfFolder);
+            foreach (string currentFilePath in allTopLevelFilePathsInFolder)
             {
-                RenameGivenFileAsItsHash(currentFilePath);
+                RenameFileAsItsHash(currentFilePath);
             }
-            ConsoleTools.WriteLineToConsoleInGivenColor('\n' + "Renaming files complete.", ConsoleColor.Cyan);
+            ConsoleTools.WriteLineToConsoleInColor('\n' + "Renaming files complete.", ConsoleColor.Cyan);
         }
 
 
-        private static void RenameGivenFileAsItsHash(string currentFilePath)
+        private static void RenameFileAsItsHash(string filePath)
         {
-            string currentFileOriginalNameWithExtension = Path.GetFileName(currentFilePath);
-            Console.Write(currentFileOriginalNameWithExtension + " -> ");
-            // We know currentFilePath will not be null, so we suppress the warning below:
-            #pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
-            string currentFileFolderPath = Path.GetDirectoryName(currentFilePath);
-            #pragma warning restore CS8600
-            string currentFileHash = HashingTools.ObtainFileHash(currentFilePath);
-            string currentFileExtension = Path.GetExtension(currentFilePath);
-            string currentFileNewNameWithExtension = currentFileHash + currentFileExtension;
-            string currentFileNewPath = currentFileFolderPath + Path.DirectorySeparatorChar + currentFileNewNameWithExtension;
-            // Because we are not changing the destination folder, the current file will not be physically moved on the disk that it is on. Instead, it will simply be renamed:
-            File.Move(currentFilePath, currentFileNewPath);
-            Console.WriteLine(currentFileNewNameWithExtension);
+            string fileNewNameWithExtension = ObtainNewFileName(filePath);
+            // We know filePath will not be null, but specify "string?" to suppress warnings:
+            string? fileFolderPath = Path.GetDirectoryName(filePath);
+            string fileNewPath = fileFolderPath + Path.DirectorySeparatorChar + fileNewNameWithExtension;
+            // Because we are not changing the destination folder, the current file will not be physically moved on the disk that it is on.
+            // Instead, it will simply be renamed:
+            File.Move(filePath, fileNewPath);
+            Console.WriteLine(fileNewNameWithExtension);
+        }
+
+
+        private static string ObtainNewFileName(string filePath)
+        {
+            string fileOriginalNameWithExtension = Path.GetFileName(filePath);
+            Console.Write(fileOriginalNameWithExtension + " -> ");
+            string fileHash = HashingTools.ObtainFileHash(filePath);
+            string fileExtension = Path.GetExtension(filePath);
+            return fileHash + fileExtension;
         }
     }
 }

@@ -4,11 +4,20 @@
     {
         public static void DisplayIfBothFoldersContainTheSameFilesAndStructure()
         {
-            string pathOfFirstFolder = ObtainFolderPathFromUser("first");
-            string pathOfSecondFolder = ObtainFolderPathFromUser("second");
-            List<string[]> listOfFirstFolderFilePathsToHashes = HashingTools.GetListOfFilePathsToHashes(pathOfFirstFolder, SearchOption.AllDirectories);
-            List<string[]> listOfSecondFolderFilePathsToHashes = HashingTools.GetListOfFilePathsToHashes(pathOfSecondFolder, SearchOption.AllDirectories);
-            DisplayIfBothListsAreIdentical(listOfFirstFolderFilePathsToHashes, listOfSecondFolderFilePathsToHashes);
+            List<string[]> firstFolderFilePathsToHashes = ObtainListOfFilePathsToHashesInUserChosenFolder("first");
+            List<string[]> secondFolderFilePathsToHashes = ObtainListOfFilePathsToHashesInUserChosenFolder("second");
+            bool areFoldersIdentical = FolderContentsComparator.AreFoldersIdentical(firstFolderFilePathsToHashes, secondFolderFilePathsToHashes);
+            DisplayResultOfComparison(areFoldersIdentical);
+        }
+
+
+        private static List<string[]> ObtainListOfFilePathsToHashesInUserChosenFolder(string firstOrSecond)
+        {
+            string pathOfFolder = ObtainFolderPathFromUser(firstOrSecond);
+            Console.WriteLine("Analyzing " + firstOrSecond + " folder...");
+            List<string[]> filePathsToRecentHashes = HashingTools.GetListOfFilePathsToHashes(pathOfFolder, SearchOption.AllDirectories);
+            Console.WriteLine("Analyzing complete.");
+            return filePathsToRecentHashes;
         }
 
 
@@ -17,7 +26,7 @@
             string userInput = ConsoleTools.PromptForUserInput("Please enter the full path of the " + firstOrSecond + " folder to analyze: ");
             while (!Directory.Exists(userInput))
             {
-                ConsoleTools.WriteLineToConsoleInGivenColor("ERROR, no folder found with the provided path.", ConsoleColor.Red);
+                ConsoleTools.WriteLineToConsoleInColor("Error, no folder found with the provided path.", ConsoleColor.Red);
                 userInput = ConsoleTools.PromptForUserInput("\n" + "Please enter the full path of the " + firstOrSecond + " folder to analyze: ");
             }
             Console.WriteLine();
@@ -25,36 +34,78 @@
         }
 
 
-        private static void DisplayIfBothListsAreIdentical(List<string[]> listOfFirstFolderFilePathsToHashes, List<string[]> listOfSecondFolderFilePathsToHashes)
+        private static void DisplayResultOfComparison(bool areFoldersIdentical)
         {
-            Console.WriteLine("\n" + "VERDICT:");
-            if (listOfFirstFolderFilePathsToHashes.Count != listOfSecondFolderFilePathsToHashes.Count)
+            if (areFoldersIdentical)
             {
-                ConsoleTools.WriteLineToConsoleInGivenColor("NOT EQUIVALENT", ConsoleColor.Red);
-                ConsoleTools.WriteLineToConsoleInGivenColor(listOfFirstFolderFilePathsToHashes.Count + " items != " + listOfSecondFolderFilePathsToHashes.Count + " items", ConsoleColor.Red);
-                return;
+                ConsoleTools.WriteLineToConsoleInColor("Equivalent", ConsoleColor.Green);
             }
-            DisplayIfBothListsContainSameContents(listOfFirstFolderFilePathsToHashes, listOfSecondFolderFilePathsToHashes);
+            else
+            {
+                ConsoleTools.WriteLineToConsoleInColor("Not equivalent", ConsoleColor.Red);
+            }
+        }
+    }
+
+
+    class FolderContentsComparator
+    {
+        public static bool AreFoldersIdentical(List<string[]> firstFolderFilePathsToHashes, List<string[]> secondFolderFilePathsToHashes)
+        {
+            if (firstFolderFilePathsToHashes.Count != secondFolderFilePathsToHashes.Count)
+            {
+                ConsoleTools.WriteLineToConsoleInColor(firstFolderFilePathsToHashes.Count + " items != " + secondFolderFilePathsToHashes.Count + " items", ConsoleColor.Red);
+                return false;
+            }
+            return DoListsContainSameContents(firstFolderFilePathsToHashes, secondFolderFilePathsToHashes);
         }
 
 
-        private static void DisplayIfBothListsContainSameContents(List<string[]> listOfFirstFolderFilePathsToHashes, List<string[]> listOfSecondFolderFilePathsToHashes)
+        private static bool DoListsContainSameContents(List<string[]> firstFolderFilePathsToHashes, List<string[]> secondFolderFilePathsToHashes)
         {
-            for (int currentIndex = 0; currentIndex < listOfFirstFolderFilePathsToHashes.Count; ++currentIndex)
+            Dictionary<string, string> secondFolderFileNamesToHashes = GetMapOfFileNamesToHashes(secondFolderFilePathsToHashes);
+            foreach (string[] currentFirstFolderFilePathAndHash in firstFolderFilePathsToHashes)
             {
-                string[] currentFirstFolderFileNameAndHash = listOfFirstFolderFilePathsToHashes[currentIndex];
-                string[] currentSecondFolderFileNameAndHash = listOfSecondFolderFilePathsToHashes[currentIndex];
-                string currentFirstFolderFileHash = currentFirstFolderFileNameAndHash[1];
-                string currentSecondFolderFileHash = currentSecondFolderFileNameAndHash[1];
-                if (!currentFirstFolderFileHash.Equals(currentSecondFolderFileHash))
+                if (!DoBothFoldersContainSameFileNameToHash(currentFirstFolderFilePathAndHash, secondFolderFileNamesToHashes))
                 {
-                    string currentFirstFolderFileName = currentFirstFolderFileNameAndHash[0];
-                    string currentSecondFolderFileName = currentSecondFolderFileNameAndHash[0];
-                    ConsoleTools.WriteLineToConsoleInGivenColor("NOT EQUIVALENT:" + "\n" + currentFirstFolderFileName + " != " + currentSecondFolderFileName, ConsoleColor.Red);
-                    return;
+                    return false;
                 }
             }
-            ConsoleTools.WriteLineToConsoleInGivenColor("EQUIVALENT", ConsoleColor.Green);
+            return true;
+        }
+
+
+        private static Dictionary<string, string> GetMapOfFileNamesToHashes(List<string[]> filePathsToHashes)
+        {
+            Dictionary<string, string> fileNamesToHashes = new Dictionary<string, string>(filePathsToHashes.Count);
+            foreach (string[] currentFilePathAndHash in filePathsToHashes)
+            {
+                string currentFilePath = currentFilePathAndHash[0];
+                string currentFileName = Path.GetFileName(currentFilePath);
+                string currentFileHash = currentFilePathAndHash[1];
+                fileNamesToHashes[currentFileName] = currentFileHash;
+            }
+            return fileNamesToHashes;
+        }
+
+
+        private static bool DoBothFoldersContainSameFileNameToHash(string[] currentFirstFolderFilePathAndHash, Dictionary<string, string> secondFolderFileNamesToHashes)
+        {
+            string currentFirstFolderFilePath = currentFirstFolderFilePathAndHash[0];
+            string currentFirstFolderFileName = Path.GetFileName(currentFirstFolderFilePath);
+            if (!secondFolderFileNamesToHashes.ContainsKey(currentFirstFolderFileName))
+            {
+                ConsoleTools.WriteLineToConsoleInColor(currentFirstFolderFileName + " was not found in the second folder", ConsoleColor.Red);
+                return false;
+            }
+            string currentFirstFolderFileHash = currentFirstFolderFilePathAndHash[1];
+            string currentSecondFolderFileHash = secondFolderFileNamesToHashes[currentFirstFolderFileName];
+            if (!currentFirstFolderFileHash.Equals(currentSecondFolderFileHash))
+            {
+                ConsoleTools.WriteLineToConsoleInColor(currentFirstFolderFileHash + " != " + currentSecondFolderFileHash, ConsoleColor.Red);
+                return false;
+            }
+            return true;
         }
     }
 }

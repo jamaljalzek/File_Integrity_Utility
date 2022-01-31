@@ -2,116 +2,135 @@
 {
     class MenuOption6
     {
-        public static void CompareHashesOfFilesInGivenFolderToRecordedHashesInTextFile()
+        public static void CompareHashesOfFilesInFolderToRecordedHashesInTextFile()
         {
-            string pathOfGivenFolder = ConsoleTools.ObtainFolderPathFromUser();
-            string pathOfTextFileContainingFileNamesAndHashes = pathOfGivenFolder + "\\File SHA 256 Hashes.txt";
-            if (!File.Exists(pathOfTextFileContainingFileNamesAndHashes))
+            string pathOfFolder = ConsoleTools.ObtainFolderPathFromUser();
+            string pathOfTextFile = pathOfFolder + "\\File SHA 256 Hashes.txt";
+            if (!File.Exists(pathOfTextFile))
             {
-                ConsoleTools.WriteLineToConsoleInGivenColor("\n" + "ERROR: 'File SHA 256 Hashes.txt' was not found in the given folder.", ConsoleColor.Red);
+                ConsoleTools.WriteLineToConsoleInColor("\n" + "Error: 'File SHA 256 Hashes.txt' was not found in the given folder.", ConsoleColor.Red);
                 return;
             }
-            List<string[]> listOfFilePathsToHashes = HashingTools.GetListOfFilePathsToHashes(pathOfGivenFolder, SearchOption.TopDirectoryOnly);
-            // There is no need to consider the .txt file containing hashes itself, so we remove its full path and hash from our list:
-            RemoveSha256HashesTextFileNameAndHashFromList(pathOfTextFileContainingFileNamesAndHashes, listOfFilePathsToHashes);
-            Dictionary<string, string> recordedFileNamesToHashes = GetMapOfRecordedFilePathsToHashes(pathOfTextFileContainingFileNamesAndHashes);
-            CompareListOfFileNamesAndHashesToRecordedFileNamesAndHashes(listOfFilePathsToHashes, recordedFileNamesToHashes);
+            Dictionary<string, string> fileNamesToRecordedHashes = GetMapOfFileNamesToRecordedHashes(pathOfTextFile);
+            List<string[]> filePathsToRecentHashes = HashingTools.GetListOfFilePathsToHashes(pathOfFolder, SearchOption.TopDirectoryOnly);
+            // There is no need to consider the .txt file containing hashes itself, so we remove its path and hash from our list:
+            RemoveTextFilePathAndHashFromList(pathOfTextFile, filePathsToRecentHashes);
+            bool wasInconsistencyFound = FileHashComparator.CompareRecentHashesToRecordedHashesForAllFiles(filePathsToRecentHashes, fileNamesToRecordedHashes);
+            DisplayIfAllFilesAreConsistentOrNot(wasInconsistencyFound);
         }
 
 
-        private static void RemoveSha256HashesTextFileNameAndHashFromList(string pathOfTextFileContainingFileNamesAndTheirHashes, List<string[]> listOfFilePathsToHashes)
+        private static Dictionary<string, string> GetMapOfFileNamesToRecordedHashes(string pathOfTextFile)
         {
-            for (int currentIndex = 0; currentIndex < listOfFilePathsToHashes.Count; ++currentIndex)
+            // Given the text file containing file names to hashes, a few issues can occur:
+            //     a. The groupings of file names and their hashes may be in any arbitrary order, rather than alphabetical.
+            //     One solution is to first read this list, and then sort it.
+            //     Keep in mind that Merge Sort takes O(n * log(n)) time and O(n) space.
+            //     b. A (newer) file that is present in the given folder may not even be recorded in the text file.
+            //     How do we efficiently detect this?
+            // Using a Hash Map, which has O(1) insertion and removal time as well as O(n) space seems to work pretty well here.
+            Dictionary<string, string> fileNamesToRecordedHashes = new Dictionary<string, string>();
+            StreamReader textFileReader = File.OpenText(pathOfTextFile);
+            while (!textFileReader.EndOfStream)
             {
-                string[] currentFilePathAndItsHash = listOfFilePathsToHashes[currentIndex];
-                string currentFilePath = currentFilePathAndItsHash[0];
-                if (currentFilePath.Equals(pathOfTextFileContainingFileNamesAndTheirHashes))
+                string? currentFileName = textFileReader.ReadLine();
+                string? currentFileHash = textFileReader.ReadLine();
+                if (currentFileName != null && currentFileHash != null)
                 {
-                    listOfFilePathsToHashes.RemoveAt(currentIndex);
+                    fileNamesToRecordedHashes[currentFileName] = currentFileHash;
+                }
+                // Each [file name, file hash] entry in the text file is spaced out with an empty line, so we must skip it:
+                textFileReader.ReadLine();
+            }
+            textFileReader.Close();
+            return fileNamesToRecordedHashes;
+        }
+
+
+        private static void RemoveTextFilePathAndHashFromList(string pathOfTextFile, List<string[]> filePathsToRecentHashes)
+        {
+            for (int currentIndex = 0; currentIndex < filePathsToRecentHashes.Count; ++currentIndex)
+            {
+                string[] currentFilePathAndHash = filePathsToRecentHashes[currentIndex];
+                string currentFilePath = currentFilePathAndHash[0];
+                if (currentFilePath.Equals(pathOfTextFile))
+                {
+                    filePathsToRecentHashes.RemoveAt(currentIndex);
                     return;
                 }
             }
         }
 
 
-        private static Dictionary<string, string> GetMapOfRecordedFilePathsToHashes(string fullPathOfTextFileContainingFileNamesAndTheirHashes)
+        private static void DisplayIfAllFilesAreConsistentOrNot(bool wasAnyInconsistencyFound)
         {
-            // Given the "File SHA 256 Hashes.txt", a few issues can occur:
-            //     a. The groupings of file names and their hashes may be in any arbitrary order (rather than say, alphabetical).
-            //     This happens if the user manually adds entries to the file, rather than relying on this program.
-            //     One solution is to first read this list, and then sort it.
-            //     Keep in mind that Merge Sort takes O(n * log(n)) time and O(n) space.
-            //     b. A file that we recently hashed (which is present in the given folder) may not even be recorded in the above .txt file.
-            //     How do we efficiently detect this?
-            // Thus, using a Hash Map, which has O(1) insertion and removal time as well as O(n) space seems to work pretty well here.
-            Dictionary<string, string> recordedFileNamesToHashes = new Dictionary<string, string>();
-            StreamReader textFileStreamReader = File.OpenText(fullPathOfTextFileContainingFileNamesAndTheirHashes);
-            while (!textFileStreamReader.EndOfStream)
+            Console.WriteLine('\n' + "Verdict:");
+            if (wasAnyInconsistencyFound)
             {
-                string? currentFileNameRecordedInTextFile = textFileStreamReader.ReadLine();
-                string? currentFileHashRecordedInTextFile = textFileStreamReader.ReadLine();
-                if (currentFileNameRecordedInTextFile != null && currentFileHashRecordedInTextFile != null)
-                {
-                    recordedFileNamesToHashes[currentFileNameRecordedInTextFile] = currentFileHashRecordedInTextFile;
-                }
-                // Each (file name, file hash) entry in the .txt file is spaced out with an empty line, so we must skip it:
-                textFileStreamReader.ReadLine();
+                ConsoleTools.WriteLineToConsoleInColor("Inconsistency(s) found", ConsoleColor.Red);
             }
-            textFileStreamReader.Close();
-            return recordedFileNamesToHashes;
+            else
+            {
+                ConsoleTools.WriteLineToConsoleInColor("No inconsistency(s) found", ConsoleColor.Green);
+            }
         }
+    }
 
 
-        private static void CompareListOfFileNamesAndHashesToRecordedFileNamesAndHashes(List<string[]> listOfFilePathsToHashes, Dictionary<string, string> recordedFileNamesToHashes)
+    class FileHashComparator
+    {
+        public static bool CompareRecentHashesToRecordedHashesForAllFiles(List<string[]> filePathsToRecentHashes, Dictionary<string, string> fileNamesToRecordedHashes)
         {
             Console.WriteLine("\n" + "Comparing file names and hashes with those in text file...");
-            bool wasAnyInconsistencyFound = false;
-            foreach (string[] currentFilePathAndItsHash in listOfFilePathsToHashes)
+            bool wasInconsistencyFound = false;
+            foreach (string[] currentFilePathAndHash in filePathsToRecentHashes)
             {
-                bool isCurrentFileConsistent = DoesCurrentFileNameAndHashMatchRecordedFileNameAndHash(currentFilePathAndItsHash, recordedFileNamesToHashes);
+                bool isCurrentFileConsistent = DoesFileRecentHashMatchAnyRecordedHash(currentFilePathAndHash, fileNamesToRecordedHashes);
                 if (!isCurrentFileConsistent)
                 {
-                    wasAnyInconsistencyFound = true;
+                    wasInconsistencyFound = true;
                 }
             }
-            DisplayResult(wasAnyInconsistencyFound);
+            Console.WriteLine("Comparing complete.");
+            return wasInconsistencyFound;
         }
 
 
-        private static bool DoesCurrentFileNameAndHashMatchRecordedFileNameAndHash(string[] currentFilePathAndHash, Dictionary<string, string> recordedFileNamesToHashes)
+        private static bool DoesFileRecentHashMatchAnyRecordedHash(string[] filePathAndHash, Dictionary<string, string> fileNamesToRecordedHashes)
         {
-            string currentFilePath = currentFilePathAndHash[0];
-            string currentFileName = Path.GetFileName(currentFilePath);
-            if (!recordedFileNamesToHashes.ContainsKey(currentFileName))
+            string filePath = filePathAndHash[0];
+            string fileName = Path.GetFileName(filePath);
+            if (!DoesRecordedHashExistForFile(fileName, fileNamesToRecordedHashes))
             {
-                ConsoleTools.WriteLineToConsoleInGivenColor("ERROR: " + currentFileName + " was not found in File SHA 256 Hashes.txt.", ConsoleColor.Red);
                 return false;
             }
-            string currentFileRecentHash = currentFilePathAndHash[1];
-            string currentRecordedFileHash = recordedFileNamesToHashes[currentFileName];
-            if (!currentFileRecentHash.Equals(currentRecordedFileHash))
+            string fileRecentHash = filePathAndHash[1];
+            return DoesFileRecentHashMatchRecordedHash(fileName, fileRecentHash, fileNamesToRecordedHashes);
+        }
+
+
+        private static bool DoesRecordedHashExistForFile(string fileName, Dictionary<string, string> fileNamesToRecordedHashes)
+        {
+            if (!fileNamesToRecordedHashes.ContainsKey(fileName))
             {
-                ConsoleTools.WriteLineToConsoleInGivenColor("ERROR: hash for " + currentFileName + " does NOT match associated hash in File SHA 256 Hashes.txt:", ConsoleColor.Red);
-                ConsoleTools.WriteLineToConsoleInGivenColor("Recent file hash: " + currentFileRecentHash, ConsoleColor.Red);
-                ConsoleTools.WriteLineToConsoleInGivenColor("File SHA 256 Hashes.txt hash: " + currentRecordedFileHash, ConsoleColor.Red);
+                ConsoleTools.WriteLineToConsoleInColor("Error: " + fileName + " was not found in File SHA 256 Hashes.txt.", ConsoleColor.Red);
                 return false;
             }
             return true;
         }
 
 
-        private static void DisplayResult(bool wasAnyInconsistencyFound)
+        private static bool DoesFileRecentHashMatchRecordedHash(string fileName, string fileRecentHash, Dictionary<string, string> fileNamesToRecordedHashes)
         {
-            ConsoleTools.WriteToConsoleInGivenColor("Comparing complete.", ConsoleColor.Cyan);
-            Console.WriteLine('\n' + "VERDICT:");
-            if (wasAnyInconsistencyFound)
+            string fileRecordedHash = fileNamesToRecordedHashes[fileName];
+            if (!fileRecentHash.Equals(fileRecordedHash))
             {
-                ConsoleTools.WriteLineToConsoleInGivenColor("INCONSISTENCY(S) FOUND", ConsoleColor.Red);
+                ConsoleTools.WriteLineToConsoleInColor("Error: hash for " + fileName + " does NOT match associated hash in File SHA 256 Hashes.txt:", ConsoleColor.Red);
+                ConsoleTools.WriteLineToConsoleInColor("Recent file hash: " + fileRecentHash, ConsoleColor.Red);
+                ConsoleTools.WriteLineToConsoleInColor("File SHA 256 Hashes.txt hash: " + fileRecordedHash, ConsoleColor.Red);
+                return false;
             }
-            else
-            {
-                ConsoleTools.WriteLineToConsoleInGivenColor("NO INCONSISTENCIES FOUND", ConsoleColor.Green);
-            }
+            return true;
         }
     }
 }
