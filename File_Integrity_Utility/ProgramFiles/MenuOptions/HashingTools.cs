@@ -2,7 +2,7 @@
 
 namespace File_Integrity_Utility.ProgramFiles
 {
-    class HashingTools
+    public class HashingTools
     {
         /// <summary>
         /// The format of the returned list is that of { [file1Name, file1Hash], [file2Name, file2Hash], etc. }.

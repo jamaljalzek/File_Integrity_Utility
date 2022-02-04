@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "File_Integrity_Utility", "File_Integrity_Utility\File_Integrity_Utility.csproj", "{BD90BB43-5897-4FCA-B886-B870EAEB7DAF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "File_Integrity_Utility", "File_Integrity_Utility\File_Integrity_Utility.csproj", "{BD90BB43-5897-4FCA-B886-B870EAEB7DAF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "File_Integrity_Utility_Tests", "File_Integrity_Utility_Tests\File_Integrity_Utility_Tests.csproj", "{19CCA071-7832-4AC2-9E5C-18390777D252}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{BD90BB43-5897-4FCA-B886-B870EAEB7DAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BD90BB43-5897-4FCA-B886-B870EAEB7DAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BD90BB43-5897-4FCA-B886-B870EAEB7DAF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{19CCA071-7832-4AC2-9E5C-18390777D252}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{19CCA071-7832-4AC2-9E5C-18390777D252}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{19CCA071-7832-4AC2-9E5C-18390777D252}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{19CCA071-7832-4AC2-9E5C-18390777D252}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

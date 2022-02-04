@@ -1,6 +1,6 @@
 ﻿namespace File_Integrity_Utility.ProgramFiles.MenuOptions
 {
-    class MenuOption1
+    public class MenuOption1
     {
         public static void DisplayFileNameFollowedByItsHash()
         {

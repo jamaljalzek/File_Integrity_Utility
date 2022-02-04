@@ -33,7 +33,7 @@ namespace File_Integrity_Utility.ProgramFiles
                 }
                 else if (userChosenMenuOption == 6)
                 {
-                    MenuOption6.CompareHashesOfFilesInGivenFolderToRecordedHashesInTextFile();
+                    MenuOption6.CompareHashesOfFilesInFolderToRecordedHashesInTextFile();
                 }
                 else // (userChosenMenuOption == 7)
                 {
