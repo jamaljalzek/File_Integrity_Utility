@@ -1,6 +1,6 @@
 ﻿namespace File_Integrity_Utility.ProgramFiles.MenuOptions
 {
-    class MenuOption3
+    public class MenuOption3
     {
         public static void DisplayIfBothFilesAreIdentical()
         {
