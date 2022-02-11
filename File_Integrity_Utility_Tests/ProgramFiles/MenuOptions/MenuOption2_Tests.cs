@@ -13,20 +13,14 @@ namespace File_Integrity_Utility.ProgramFiles.MenuOptions_Tests
         public void DisplayIfFileHashMatchesProvidedHash_ForExistingFileAndCorrectHash_DisplayEquivalent()
         {
             // Set up:
-            string nameOfTestFile = "File_Integrity_Utility_Test_File.txt";
-            string pathOfTestFile = Path.GetTempPath() + Path.DirectorySeparatorChar + nameOfTestFile;
-            TestingTools.CreateNewTestFile(pathOfTestFile);
+            string pathOfTestFile = TestingTools.CreateNewTestFile(Path.GetTempPath(), "File_Integrity_Utility_Test_File.txt");
             string correctHashOfTestFile = HashingTools.ObtainFileHash(pathOfTestFile);
             StringWriter consoleOutput = TestingTools.RerouteConsoleOutput();
 
             // Test:
-            // The user is prompted to enter into the console the path of the file to hash.
-            // Then, after entering in a valid path, the user is prompted to enter in a hash to compare against.
-            // We pre-input these into the console so that it will be detected immediately after each prompt:
-            TestingTools.PreloadInputToConsole(pathOfTestFile + "\n" + correctHashOfTestFile);
-            MenuOption2.DisplayIfFileHashMatchesProvidedHash();
+            LoadConsoleInputAndRunMethod(pathOfTestFile + "\n" + correctHashOfTestFile);
 
-            // Check:
+            // Assert:
             string expectedDisplayedOutput = "Please enter the full path of the file to analyze: \n" +
                                              "Generating hash for given file...\r\n" +
                                              "File hash complete.\n\r\n" +
@@ -36,8 +30,18 @@ namespace File_Integrity_Utility.ProgramFiles.MenuOptions_Tests
             string actualDisplayedOutput = consoleOutput.ToString().Trim();
             Assert.AreEqual(expectedDisplayedOutput, actualDisplayedOutput);
 
-            // Clean up:
+            // Tear down:
             File.Delete(pathOfTestFile);
+        }
+
+
+        private void LoadConsoleInputAndRunMethod(string consoleInput)
+        {
+            // The user is prompted to enter into the console the path of the file to hash.
+            // Then, after entering in a valid path, the user is prompted to enter in a hash to compare against.
+            // We pre-input these into the console so that it will be detected immediately after each prompt:
+            TestingTools.PreloadInputToConsole(consoleInput);
+            MenuOption2.DisplayIfFileHashMatchesProvidedHash();
         }
 
 
@@ -46,20 +50,14 @@ namespace File_Integrity_Utility.ProgramFiles.MenuOptions_Tests
         public void DisplayIfFileHashMatchesProvidedHash_ForExistingFileAndIncorrectHash_DisplayNotEquivalent()
         {
             // Set up:
-            string nameOfTestFile = "File_Integrity_Utility_Test_File.txt";
-            string pathOfTestFile = Path.GetTempPath() + Path.DirectorySeparatorChar + nameOfTestFile;
-            TestingTools.CreateNewTestFile(pathOfTestFile);
+            string pathOfTestFile = TestingTools.CreateNewTestFile(Path.GetTempPath(), "File_Integrity_Utility_Test_File.txt");
             string incorrectHashOfTestFile = HashingTools.ObtainFileHash(pathOfTestFile) + "blah";
             StringWriter consoleOutput = TestingTools.RerouteConsoleOutput();
 
             // Test:
-            // The user is prompted to enter into the console the path of the file to hash.
-            // Then, after entering in a valid path, the user is prompted to enter in a hash to compare against.
-            // We pre-input these into the console so that it will be detected immediately after each prompt:
-            TestingTools.PreloadInputToConsole(pathOfTestFile + "\n" + incorrectHashOfTestFile);
-            MenuOption2.DisplayIfFileHashMatchesProvidedHash();
+            LoadConsoleInputAndRunMethod(pathOfTestFile + "\n" + incorrectHashOfTestFile);
 
-            // Check:
+            // Assert:
             string expectedDisplayedOutput = "Please enter the full path of the file to analyze: \n" +
                                              "Generating hash for given file...\r\n" +
                                              "File hash complete.\n\r\n" +
@@ -69,7 +67,7 @@ namespace File_Integrity_Utility.ProgramFiles.MenuOptions_Tests
             string actualDisplayedOutput = consoleOutput.ToString().Trim();
             Assert.AreEqual(expectedDisplayedOutput, actualDisplayedOutput);
 
-            // Clean up:
+            // Tear down:
             File.Delete(pathOfTestFile);
         }
 
