@@ -25,6 +25,17 @@ namespace File_Integrity_Utility_Tests.ProgramFiles.MenuOptions
         {
             string pathOfTestFile = pathOfFolder + Path.DirectorySeparatorChar + nameOfTestFile;
             StreamWriter textFileToWriteTo = File.CreateText(pathOfTestFile);
+            // Given that each file has a unique path, a simple and efficient way to give each test file unique contents is to write a file's own path as its contents:
+            textFileToWriteTo.Write(pathOfTestFile);
+            textFileToWriteTo.Close();
+            return pathOfTestFile;
+        }
+
+
+        public static string CreateNewTestFileWithRandomContents(string pathOfFolder, string nameOfTestFile)
+        {
+            string pathOfTestFile = pathOfFolder + Path.DirectorySeparatorChar + nameOfTestFile;
+            StreamWriter textFileToWriteTo = File.CreateText(pathOfTestFile);
             Random random = new Random();
             for (int currentCharNumber = 0; currentCharNumber < 1024; ++currentCharNumber)
             {
