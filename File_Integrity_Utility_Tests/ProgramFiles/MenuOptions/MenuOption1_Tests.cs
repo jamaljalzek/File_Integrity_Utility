@@ -16,7 +16,7 @@ namespace File_Integrity_Utility.ProgramFiles.MenuOptions_Tests
             string pathOfTestFile = TestingTools.CreateNewTestFile(Path.GetTempPath(), "File_Integrity_Utility_Test_File.txt");
             StringWriter consoleOutput = TestingTools.RerouteConsoleOutput();
 
-            // Test:
+            // Execute:
             LoadConsoleInputAndRunMethod(pathOfTestFile);
 
             // Assert:

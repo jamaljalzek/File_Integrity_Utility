@@ -16,7 +16,7 @@ namespace File_Integrity_Utility.ProgramFiles.MenuOptions_Tests
             string pathOfTestFolder = TestingTools.CreateTestFolder("File_Integrity_Utility_Test_Folder");
             StringWriter consoleOutput = TestingTools.RerouteConsoleOutput();
 
-            // Test:
+            // Execute:
             LoadConsoleInputAndRunMethod(pathOfTestFolder);
 
             // Assert:
@@ -50,7 +50,7 @@ namespace File_Integrity_Utility.ProgramFiles.MenuOptions_Tests
             string expectedNewNameOfTestFile = HashingTools.ObtainFileHash(pathOfTestFile) + ".txt";
             StringWriter consoleOutput = TestingTools.RerouteConsoleOutput();
 
-            // Test:
+            // Execute:
             LoadConsoleInputAndRunMethod(pathOfTestFolder);
 
             // Assert:
@@ -75,7 +75,7 @@ namespace File_Integrity_Utility.ProgramFiles.MenuOptions_Tests
             string pathOfTestFile = TestingTools.CreateNewTestFile(pathOfTestFolder, "File_Integrity_Utility_Test_File.txt");
             string expectedNewNameOfTestFile = HashingTools.ObtainFileHash(pathOfTestFile) + ".txt";
 
-            // Test:
+            // Execute:
             LoadConsoleInputAndRunMethod(pathOfTestFolder);
 
             // Assert:
@@ -102,11 +102,11 @@ namespace File_Integrity_Utility.ProgramFiles.MenuOptions_Tests
         {
             // Set up:
             string pathOfTestFolder = TestingTools.CreateTestFolder("File_Integrity_Utility_Test_Folder");
-            string[] listOfTestFileOriginalNames = CreateMultipleTestFilesWithSameContents(pathOfTestFolder, 2);
-            string[] listOfTestFileNewNames = GetListOfTestFileExpectedNewNames(pathOfTestFolder, listOfTestFileOriginalNames);
+            string[] listOfTestFileOriginalNames = TestingTools.CreateMultipleTestFilesWithSameContents(pathOfTestFolder, 2);
+            string[] listOfTestFileNewNames = TestingTools.GetListOfTestFileExpectedNewNames(pathOfTestFolder, listOfTestFileOriginalNames);
             StringWriter consoleOutput = TestingTools.RerouteConsoleOutput();
 
-            // Test:
+            // Execute:
             LoadConsoleInputAndRunMethod(pathOfTestFolder);
 
             // Assert:
@@ -123,46 +123,16 @@ namespace File_Integrity_Utility.ProgramFiles.MenuOptions_Tests
         }
 
 
-        private string[] CreateMultipleTestFilesWithSameContents(string pathOfTestFolder, int numberOfTestFilesToCreate)
-        {
-            string pathOfOriginalTestFile = TestingTools.CreateNewTestFile(pathOfTestFolder, "File_Integrity_Utility_Test_File.txt");
-            string[] listOfTestFileOriginalNames = new string[numberOfTestFilesToCreate];
-            for (int currentTestFileNumber = 0; currentTestFileNumber < numberOfTestFilesToCreate; ++currentTestFileNumber)
-            {
-                string nameOfCurrentTestFile = "File_Integrity_Utility_Test_File" + currentTestFileNumber + ".txt";
-                string pathOfCurrentTestFile = pathOfTestFolder + Path.DirectorySeparatorChar + nameOfCurrentTestFile;
-                File.Copy(pathOfOriginalTestFile, pathOfCurrentTestFile, true);
-                listOfTestFileOriginalNames[currentTestFileNumber] = nameOfCurrentTestFile;
-            }
-            File.Delete(pathOfOriginalTestFile);
-            return listOfTestFileOriginalNames;
-        }
-
-
-        private string[] GetListOfTestFileExpectedNewNames(string pathOfTestFolder, string[] listOfTestFileOriginalNames)
-        {
-            string[] listOfTestFileNewNames = new string[listOfTestFileOriginalNames.Length];
-            for (int currentTestFileNumber = 0; currentTestFileNumber < listOfTestFileOriginalNames.Length; ++currentTestFileNumber)
-            {
-                string nameOfCurrentTestFile = listOfTestFileOriginalNames[currentTestFileNumber];
-                string pathOfCurrentTestFile = pathOfTestFolder + Path.DirectorySeparatorChar + nameOfCurrentTestFile;
-                string currentTestFileExpectedNewName = HashingTools.ObtainFileHash(pathOfCurrentTestFile) + ".txt";
-                listOfTestFileNewNames[currentTestFileNumber] = currentTestFileExpectedNewName;
-            }
-            return listOfTestFileNewNames;
-        }
-
-
         [TestMethod()]
         [Timeout(5000)]
         public void RenameAllTopLevelFilesInGivenFolderAsTheirHash_GivenValidFolderContainingTwoFilesWithSameHash_FirstFileRenamedSecondFileOriginalName()
         {
             // Set up:
             string pathOfTestFolder = TestingTools.CreateTestFolder("File_Integrity_Utility_Test_Folder");
-            string[] listOfTestFileOriginalNames = CreateMultipleTestFilesWithSameContents(pathOfTestFolder, 2);
-            string[] listOfTestFileNewNames = GetListOfTestFileExpectedNewNames(pathOfTestFolder, listOfTestFileOriginalNames);
+            string[] listOfTestFileOriginalNames = TestingTools.CreateMultipleTestFilesWithSameContents(pathOfTestFolder, 2);
+            string[] listOfTestFileNewNames = TestingTools.GetListOfTestFileExpectedNewNames(pathOfTestFolder, listOfTestFileOriginalNames);
 
-            // Test:
+            // Execute:
             LoadConsoleInputAndRunMethod(pathOfTestFolder);
 
             // Assert:
@@ -184,11 +154,11 @@ namespace File_Integrity_Utility.ProgramFiles.MenuOptions_Tests
         {
             // Set up:
             string pathOfTestFolder = TestingTools.CreateTestFolder("File_Integrity_Utility_Test_Folder");
-            string[] listOfTestFileOriginalNames = CreateMultipleTestFilesWithDifferentContents(pathOfTestFolder, 5);
-            string[] listOfTestFileNewNames = GetListOfTestFileExpectedNewNames(pathOfTestFolder, listOfTestFileOriginalNames);
+            string[] listOfTestFileOriginalNames = TestingTools.CreateMultipleTestFilesWithDifferentContents(pathOfTestFolder, 5);
+            string[] listOfTestFileNewNames = TestingTools.GetListOfTestFileExpectedNewNames(pathOfTestFolder, listOfTestFileOriginalNames);
             StringWriter consoleOutput = TestingTools.RerouteConsoleOutput();
 
-            // Test:
+            // Execute:
             LoadConsoleInputAndRunMethod(pathOfTestFolder);
 
             // Assert:
@@ -207,29 +177,16 @@ namespace File_Integrity_Utility.ProgramFiles.MenuOptions_Tests
         }
 
 
-        private string[] CreateMultipleTestFilesWithDifferentContents(string pathOfTestFolder, int numberOfTestFilesToCreate)
-        {
-            string[] listOfTestFileOriginalNames = new string[numberOfTestFilesToCreate];
-            for (int currentTestFileNumber = 0; currentTestFileNumber < numberOfTestFilesToCreate; ++currentTestFileNumber)
-            {
-                string nameOfCurrentTestFile = "File_Integrity_Utility_Test_File" + currentTestFileNumber + ".txt";
-                TestingTools.CreateNewTestFile(pathOfTestFolder, nameOfCurrentTestFile);
-                listOfTestFileOriginalNames[currentTestFileNumber] = nameOfCurrentTestFile;
-            }
-            return listOfTestFileOriginalNames;
-        }
-
-
         [TestMethod()]
         [Timeout(5000)]
         public void RenameAllTopLevelFilesInGivenFolderAsTheirHash_GivenValidFolderContainingMultipleFilesWithDifferentHashes_AllFilesRenamed()
         {
             // Set up:
             string pathOfTestFolder = TestingTools.CreateTestFolder("File_Integrity_Utility_Test_Folder");
-            string[] listOfTestFileOriginalNames = CreateMultipleTestFilesWithDifferentContents(pathOfTestFolder, 5);
-            string[] listOfTestFileNewNames = GetListOfTestFileExpectedNewNames(pathOfTestFolder, listOfTestFileOriginalNames);
+            string[] listOfTestFileOriginalNames = TestingTools.CreateMultipleTestFilesWithDifferentContents(pathOfTestFolder, 5);
+            string[] listOfTestFileNewNames = TestingTools.GetListOfTestFileExpectedNewNames(pathOfTestFolder, listOfTestFileOriginalNames);
 
-            // Test:
+            // Execute:
             LoadConsoleInputAndRunMethod(pathOfTestFolder);
 
             // Assert:

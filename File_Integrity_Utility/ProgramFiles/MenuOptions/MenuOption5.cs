@@ -1,18 +1,30 @@
 ﻿namespace File_Integrity_Utility.ProgramFiles.MenuOptions
 {
-    class MenuOption5
+    public class MenuOption5
     {
         public static void GenerateTextFileListingFileNamesToHashes()
         {
             string pathOfFolder = ConsoleTools.ObtainFolderPathFromUser();
-            List<string[]> listOfFilePathsToHashes = HashingTools.GetListOfFilePathsToHashes(pathOfFolder, SearchOption.TopDirectoryOnly);
+            if (!DoesFolderContainTopLevelFiles(pathOfFolder))
+            {
+                ConsoleTools.WriteLineToConsoleInColor("\n\n" + "Error, given folder contains no top level files: hashes file not created.", ConsoleColor.Red);
+                return;
+            }
             string pathOfTextFileToBeCreated = pathOfFolder + Path.DirectorySeparatorChar + "File SHA 256 Hashes.txt";
             // We will be replacing any already existing hashes text file with an up to date one.
             // Also, we must delete it now (if any) to prevent unnecessarily hashing it:
             File.Delete(pathOfTextFileToBeCreated);
+            List<string[]> listOfFilePathsToHashes = HashingTools.GetListOfFilePathsToHashes(pathOfFolder, SearchOption.TopDirectoryOnly);
             StreamWriter textFileToWriteTo = File.CreateText(pathOfTextFileToBeCreated);
             WriteListOfFileNamesToHashesToTextFile(listOfFilePathsToHashes, textFileToWriteTo);
             textFileToWriteTo.Close();
+        }
+
+
+        private static bool DoesFolderContainTopLevelFiles(string pathOfFolder)
+        {
+            string[] listOfFilePaths = Directory.GetFiles(pathOfFolder, "*", SearchOption.TopDirectoryOnly);
+            return listOfFilePaths.Length > 0;
         }
 
 

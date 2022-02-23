@@ -16,7 +16,7 @@ namespace File_Integrity_Utility.ProgramFiles.MenuOptions_Tests
             string pathOfTestFile = TestingTools.CreateNewTestFile(Path.GetTempPath(), "File_Integrity_Utility_Test_File.txt");
             StringWriter consoleOutput = TestingTools.RerouteConsoleOutput();
 
-            // Test:
+            // Execute:
             LoadConsoleInputAndRunMethod(pathOfTestFile + "\n" + pathOfTestFile);
 
             // Assert:
@@ -56,7 +56,7 @@ namespace File_Integrity_Utility.ProgramFiles.MenuOptions_Tests
             File.Copy(pathOfOriginalTestFile, pathOfCopyTestFile, true);
             StringWriter consoleOutput = TestingTools.RerouteConsoleOutput();
 
-            // Test:
+            // Execute:
             LoadConsoleInputAndRunMethod(pathOfOriginalTestFile + "\n" + pathOfCopyTestFile);
 
             // Assert:
@@ -88,7 +88,7 @@ namespace File_Integrity_Utility.ProgramFiles.MenuOptions_Tests
             File.AppendAllText(pathOfSecondTestFile, "blah");
             StringWriter consoleOutput = TestingTools.RerouteConsoleOutput();
 
-            // Test:
+            // Execute:
             LoadConsoleInputAndRunMethod(pathOfFirstTestFile + "\n" + pathOfSecondTestFile);
 
             // Assert:

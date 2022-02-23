@@ -17,7 +17,7 @@ namespace File_Integrity_Utility.ProgramFiles.MenuOptions_Tests
             string correctHashOfTestFile = HashingTools.ObtainFileHash(pathOfTestFile);
             StringWriter consoleOutput = TestingTools.RerouteConsoleOutput();
 
-            // Test:
+            // Execute:
             LoadConsoleInputAndRunMethod(pathOfTestFile + "\n" + correctHashOfTestFile);
 
             // Assert:
@@ -54,7 +54,7 @@ namespace File_Integrity_Utility.ProgramFiles.MenuOptions_Tests
             string incorrectHashOfTestFile = HashingTools.ObtainFileHash(pathOfTestFile) + "blah";
             StringWriter consoleOutput = TestingTools.RerouteConsoleOutput();
 
-            // Test:
+            // Execute:
             LoadConsoleInputAndRunMethod(pathOfTestFile + "\n" + incorrectHashOfTestFile);
 
             // Assert:
