@@ -1,6 +1,6 @@
 ﻿namespace File_Integrity_Utility.ProgramFiles.MenuOptions
 {
-    class MenuOption6
+    public class MenuOption6
     {
         public static void CompareHashesOfFilesInFolderToRecordedHashesInTextFile()
         {

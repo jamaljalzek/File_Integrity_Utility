@@ -6,6 +6,9 @@ namespace File_Integrity_Utility_Tests.ProgramFiles.MenuOptions
 {
     internal class TestingTools
     {
+        public const int ONE_SECOND = 1000;
+
+
         public static StringWriter RerouteConsoleOutput()
         {
             StringWriter consoleOutput = new StringWriter();

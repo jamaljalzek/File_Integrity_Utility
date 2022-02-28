@@ -12,7 +12,7 @@ namespace File_Integrity_Utility.ProgramFiles.MenuOptions_Tests
 
 
         [TestMethod()]
-        [Timeout(5000)]
+        [Timeout(TestingTools.ONE_SECOND)]
         public void GenerateTextFileListingFileNamesToHashes_GivenValidEmptyFolder_DisplayHashesFileNotCreated()
         {
             // Set up:
@@ -43,7 +43,7 @@ namespace File_Integrity_Utility.ProgramFiles.MenuOptions_Tests
 
 
         [TestMethod()]
-        [Timeout(5000)]
+        [Timeout(TestingTools.ONE_SECOND)]
         public void GenerateTextFileListingFileNamesToHashes_GivenValidEmptyFolder_HashesFileNotCreated()
         {
             // Set up:
@@ -63,7 +63,7 @@ namespace File_Integrity_Utility.ProgramFiles.MenuOptions_Tests
 
 
         [TestMethod()]
-        [Timeout(5000)]
+        [Timeout(TestingTools.ONE_SECOND)]
         public void GenerateTextFileListingFileNamesToHashes_GivenValidFolderContainingOneFile_DisplayHashesFileCreated()
         {
             // Set up:
@@ -90,7 +90,7 @@ namespace File_Integrity_Utility.ProgramFiles.MenuOptions_Tests
 
 
         [TestMethod()]
-        [Timeout(5000)]
+        [Timeout(TestingTools.ONE_SECOND)]
         public void GenerateTextFileListingFileNamesToHashes_GivenValidFolderContainingOneFile_HashesFileCreated()
         {
             // Set up:
@@ -117,7 +117,7 @@ namespace File_Integrity_Utility.ProgramFiles.MenuOptions_Tests
 
 
         [TestMethod()]
-        [Timeout(5000)]
+        [Timeout(TestingTools.ONE_SECOND)]
         public void GenerateTextFileListingFileNamesToHashes_GivenValidFolderContainingOneFileAndHashesFile_DisplayHashesFileCreated()
         {
             // Set up:
@@ -152,7 +152,7 @@ namespace File_Integrity_Utility.ProgramFiles.MenuOptions_Tests
 
 
         [TestMethod()]
-        [Timeout(5000)]
+        [Timeout(TestingTools.ONE_SECOND)]
         public void GenerateTextFileListingFileNamesToHashes_GivenValidFolderContainingOneFileAndHashesFile_OldHashesFileReplacedAndUpdated()
         {
             // Set up:
@@ -180,7 +180,7 @@ namespace File_Integrity_Utility.ProgramFiles.MenuOptions_Tests
 
 
         [TestMethod()]
-        [Timeout(5000)]
+        [Timeout(TestingTools.ONE_SECOND)]
         public void GenerateTextFileListingFileNamesToHashes_GivenValidFolderContainingTwoFilesWithSameHash_DisplayHashesFileCreated()
         {
             // Set up:
@@ -210,7 +210,7 @@ namespace File_Integrity_Utility.ProgramFiles.MenuOptions_Tests
 
 
         [TestMethod()]
-        [Timeout(5000)]
+        [Timeout(TestingTools.ONE_SECOND)]
         public void GenerateTextFileListingFileNamesToHashes_GivenValidFolderContainingTwoFilesWithSameHash_HashesFileCreated()
         {
             // Set up:
@@ -249,7 +249,7 @@ namespace File_Integrity_Utility.ProgramFiles.MenuOptions_Tests
 
 
         [TestMethod()]
-        [Timeout(5000)]
+        [Timeout(TestingTools.ONE_SECOND)]
         public void GenerateTextFileListingFileNamesToHashes_GivenValidFolderContainingMultipleFilesWithDifferentHashes_DisplayHashesFileCreated()
         {
             // Set up:
@@ -268,8 +268,8 @@ namespace File_Integrity_Utility.ProgramFiles.MenuOptions_Tests
                 expectedDisplayedOutput += pathOfTestFolder + Path.DirectorySeparatorChar + currentFileName + "... DONE\r\n";
             }
             expectedDisplayedOutput += "All file hashes generated.\r\n\n" +
-                                      "Writing file hashes to text file...\r\n" +
-                                      "All file hashes written to text file.";
+                                       "Writing file hashes to text file...\r\n" +
+                                       "All file hashes written to text file.";
             string actualDisplayedOutput = consoleOutput.ToString().Trim();
             Assert.AreEqual(expectedDisplayedOutput, actualDisplayedOutput);
 
@@ -279,7 +279,7 @@ namespace File_Integrity_Utility.ProgramFiles.MenuOptions_Tests
 
 
         [TestMethod()]
-        [Timeout(5000)]
+        [Timeout(TestingTools.ONE_SECOND)]
         public void GenerateTextFileListingFileNamesToHashes_GivenValidFolderContainingMultipleFilesWithDifferentHashes_HashesFileCreated()
         {
             // Set up:

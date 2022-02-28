@@ -9,7 +9,7 @@ namespace File_Integrity_Utility.ProgramFiles.MenuOptions_Tests
     public class MenuOption4_Tests
     {
         [TestMethod()]
-        [Timeout(5000)]
+        [Timeout(TestingTools.ONE_SECOND)]
         public void RenameAllTopLevelFilesInGivenFolderAsTheirHash_GivenValidEmptyFolder_DisplayRenamingFilesComplete()
         {
             // Set up:
@@ -41,7 +41,7 @@ namespace File_Integrity_Utility.ProgramFiles.MenuOptions_Tests
 
 
         [TestMethod()]
-        [Timeout(5000)]
+        [Timeout(TestingTools.ONE_SECOND)]
         public void RenameAllTopLevelFilesInGivenFolderAsTheirHash_GivenValidFolderContainingOneFile_DisplayRenamingFilesComplete()
         {
             // Set up:
@@ -67,7 +67,7 @@ namespace File_Integrity_Utility.ProgramFiles.MenuOptions_Tests
 
 
         [TestMethod()]
-        [Timeout(5000)]
+        [Timeout(TestingTools.ONE_SECOND)]
         public void RenameAllTopLevelFilesInGivenFolderAsTheirHash_GivenValidFolderContainingOneFile_FileRenamed()
         {
             // Set up:
@@ -97,7 +97,7 @@ namespace File_Integrity_Utility.ProgramFiles.MenuOptions_Tests
 
 
         [TestMethod()]
-        [Timeout(5000)]
+        [Timeout(TestingTools.ONE_SECOND)]
         public void RenameAllTopLevelFilesInGivenFolderAsTheirHash_GivenValidFolderContainingTwoFilesWithSameHash_DisplayRenamingFilesComplete()
         {
             // Set up:
@@ -124,7 +124,7 @@ namespace File_Integrity_Utility.ProgramFiles.MenuOptions_Tests
 
 
         [TestMethod()]
-        [Timeout(5000)]
+        [Timeout(TestingTools.ONE_SECOND)]
         public void RenameAllTopLevelFilesInGivenFolderAsTheirHash_GivenValidFolderContainingTwoFilesWithSameHash_FirstFileRenamedSecondFileOriginalName()
         {
             // Set up:
@@ -149,7 +149,7 @@ namespace File_Integrity_Utility.ProgramFiles.MenuOptions_Tests
 
 
         [TestMethod()]
-        [Timeout(5000)]
+        [Timeout(TestingTools.ONE_SECOND)]
         public void RenameAllTopLevelFilesInGivenFolderAsTheirHash_GivenValidFolderContainingMultipleFilesWithDifferentHashes_DisplayRenamingFilesComplete()
         {
             // Set up:
@@ -178,7 +178,7 @@ namespace File_Integrity_Utility.ProgramFiles.MenuOptions_Tests
 
 
         [TestMethod()]
-        [Timeout(5000)]
+        [Timeout(TestingTools.ONE_SECOND)]
         public void RenameAllTopLevelFilesInGivenFolderAsTheirHash_GivenValidFolderContainingMultipleFilesWithDifferentHashes_AllFilesRenamed()
         {
             // Set up:

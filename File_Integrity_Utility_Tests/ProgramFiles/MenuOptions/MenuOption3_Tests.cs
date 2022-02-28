@@ -9,7 +9,7 @@ namespace File_Integrity_Utility.ProgramFiles.MenuOptions_Tests
     public class MenuOption3_Tests
     {
         [TestMethod()]
-        [Timeout(5000)]
+        [Timeout(TestingTools.ONE_SECOND)]
         public void DisplayIfBothFilesAreIdentical_ComparingAFileAgainstItself_DisplayEquivalent()
         {
             // Set up:
@@ -47,7 +47,7 @@ namespace File_Integrity_Utility.ProgramFiles.MenuOptions_Tests
 
 
         [TestMethod()]
-        [Timeout(5000)]
+        [Timeout(TestingTools.ONE_SECOND)]
         public void DisplayIfBothFilesAreIdentical_ComparingAFileAgainstItsCopy_DisplayEquivalent()
         {
             // Set up:
@@ -78,7 +78,7 @@ namespace File_Integrity_Utility.ProgramFiles.MenuOptions_Tests
 
 
         [TestMethod()]
-        [Timeout(5000)]
+        [Timeout(TestingTools.ONE_SECOND)]
         public void DisplayIfBothFilesAreIdentical_ComparingNonIdenticalFiles_DisplayNotEquivalent()
         {
             // Set up:

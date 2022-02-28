@@ -9,7 +9,7 @@ namespace File_Integrity_Utility.ProgramFiles.MenuOptions_Tests
     public class MenuOption1_Tests
     {
         [TestMethod()]
-        [Timeout(5000)]
+        [Timeout(TestingTools.ONE_SECOND)]
         public void DisplayFileNameFollowedByItsHash_ForExistingFile_DisplayCorrectFileHash()
         {
             // Set up:

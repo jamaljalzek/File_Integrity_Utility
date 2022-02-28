@@ -9,7 +9,7 @@ namespace File_Integrity_Utility.ProgramFiles.MenuOptions_Tests
     public class MenuOption2_Tests
     {
         [TestMethod()]
-        [Timeout(5000)]
+        [Timeout(TestingTools.ONE_SECOND)]
         public void DisplayIfFileHashMatchesProvidedHash_ForExistingFileAndCorrectHash_DisplayEquivalent()
         {
             // Set up:
@@ -46,7 +46,7 @@ namespace File_Integrity_Utility.ProgramFiles.MenuOptions_Tests
 
 
         [TestMethod()]
-        [Timeout(5000)]
+        [Timeout(TestingTools.ONE_SECOND)]
         public void DisplayIfFileHashMatchesProvidedHash_ForExistingFileAndIncorrectHash_DisplayNotEquivalent()
         {
             // Set up:
