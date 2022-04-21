@@ -8,15 +8,25 @@ namespace File_Integrity_Utility.ProgramFiles.MenuOptions_Tests
     public class MenuOption5_Class_Tests
     {
         [TestClass()]
-        public class GenerateTextFileListingFileNamesToHashes_Method_Tests
+        public class CompareNameOfEachTopLevelFileInGivenFolderToItsHash_Method_Tests
         {
             private const string NAME_OF_TEST_FOLDER = "File_Integrity_Utility_Test_Folder";
-            private const string ENTER_FOLDER_PATH_PROMPT = "Please enter the full path of the folder to analyze: \n";
+            private const string NAME_OF_TEST_FILE = "File_Integrity_Utility_Test_File.txt";
 
 
+            /*
+             * Tests:
+             * 1. Given an empty folder.
+             * 2. Given a folder with 1 file, where its name matches its hash.
+             * 3. Given a folder with 1 file, where its name does not match its hash.
+             * 
+             * 4. Given a folder with multiple files, where each one's name matches its hash.
+             * 5. Given a folder with multiple files, where for some files its name matches its hash, and some do not.
+             * 6. Given a folder with multiple files, where each one's name does not match its hash.
+             */
             [TestMethod()]
             [Timeout(TestingTools.ONE_SECOND)]
-            public void GivenEmptyFolder_DisplayHashesFileNotCreated()
+            public void GivenEmptyFolder_DisplayNoInconsistenciesFound()
             {
                 // Set up:
                 string pathOfTestFolder = TestingTools.CreateTestFolder(NAME_OF_TEST_FOLDER);
@@ -26,8 +36,10 @@ namespace File_Integrity_Utility.ProgramFiles.MenuOptions_Tests
                 LoadConsoleInputAndRunMethod(pathOfTestFolder);
 
                 // Assert:
-                string expectedDisplayedOutput = ENTER_FOLDER_PATH_PROMPT + "\n" +
-                                                 "Error, given folder contains no top level files: hashes file not created.";
+                string expectedDisplayedOutput = ReturnEnterFolderPathPromptAndComparingFiles(pathOfTestFolder) + "\n";
+                expectedDisplayedOutput += "Comparing files complete.\r\n\n" +
+                                           "Verdict:\r\n" +
+                                           "No inconsistency(s) found";
                 string actualDisplayedOutput = consoleOutput.ToString().Trim();
                 Assert.AreEqual(expectedDisplayedOutput, actualDisplayedOutput);
 
@@ -41,104 +53,37 @@ namespace File_Integrity_Utility.ProgramFiles.MenuOptions_Tests
                 // The user is prompted to enter into the console the path of the folder.
                 // We pre-input this into the console so that it will be detected immediately after the prompt:
                 TestingTools.PreloadInputToConsole(pathOfTestFolder);
-                MenuOption5.GenerateTextFileListingFileNamesToHashes();
+                MenuOption5.CompareNameOfEachTopLevelFileInGivenFolderToItsHash();
+            }
+
+
+            private string ReturnEnterFolderPathPromptAndComparingFiles(string pathOfTestFolder)
+            {
+                return "Please enter the full path of the folder to analyze: \n" +
+                       "Comparing the name of each top level file in " + pathOfTestFolder + "to its hash...\r\n";
             }
 
 
             [TestMethod()]
             [Timeout(TestingTools.ONE_SECOND)]
-            public void GivenEmptyFolder_HashesFileNotCreated()
+            public void GivenFolderContainingOneFileWhoseNameMatchesItsHash_DisplayNoInconsistenciesFound()
             {
                 // Set up:
                 string pathOfTestFolder = TestingTools.CreateTestFolder(NAME_OF_TEST_FOLDER);
-
-                // Execute:
-                LoadConsoleInputAndRunMethod(pathOfTestFolder);
-
-                // Assert:
-                string pathOfHashesFile = pathOfTestFolder + Path.DirectorySeparatorChar + "File SHA 256 Hashes.txt";
-                bool doesHashesFileExist = File.Exists(pathOfHashesFile);
-                Assert.IsFalse(doesHashesFileExist);
-
-                // Tear down:
-                Directory.Delete(pathOfTestFolder, true);
-            }
-
-
-            [TestMethod()]
-            [Timeout(TestingTools.ONE_SECOND)]
-            public void GivenFolderContainingOneFile_DisplayHashesFileCreated()
-            {
-                // Set up:
-                string pathOfTestFolder = TestingTools.CreateTestFolder(NAME_OF_TEST_FOLDER);
-                string pathOfTestFile = TestingTools.CreateNewTestFile(pathOfTestFolder, "File_Integrity_Utility_Test_File.txt");
-                StringWriter consoleOutput = TestingTools.RerouteConsoleOutput();
-
-                // Execute:
-                LoadConsoleInputAndRunMethod(pathOfTestFolder);
-
-                // Assert:
-                string expectedDisplayedOutput = ENTER_FOLDER_PATH_PROMPT +
-                                                 "Generating hashes for all files in " + pathOfTestFolder + "...\r\n" +
-                                                 pathOfTestFile + "... DONE\r\n" +
-                                                 "All file hashes generated.\r\n\n" +
-                                                 "Writing file hashes to text file...\r\n" +
-                                                 "All file hashes written to text file.";
-                string actualDisplayedOutput = consoleOutput.ToString().Trim();
-                Assert.AreEqual(expectedDisplayedOutput, actualDisplayedOutput);
-
-                // Tear down:
-                Directory.Delete(pathOfTestFolder, true);
-            }
-
-
-            [TestMethod()]
-            [Timeout(TestingTools.ONE_SECOND)]
-            public void GivenFolderContainingOneFile_HashesFileCreated()
-            {
-                // Set up:
-                string pathOfTestFolder = TestingTools.CreateTestFolder(NAME_OF_TEST_FOLDER);
-                string nameOfTestFile = "File_Integrity_Utility_Test_File.txt";
-                string pathOfTestFile = TestingTools.CreateNewTestFile(pathOfTestFolder, nameOfTestFile);
-
-                // Execute:
-                LoadConsoleInputAndRunMethod(pathOfTestFolder);
-
-                // Assert:
-                string pathOfHashesFile = pathOfTestFolder + Path.DirectorySeparatorChar + "File SHA 256 Hashes.txt";
-                StreamReader hashesFileReader = File.OpenText(pathOfHashesFile);
-                string? hashesFileFirstLine = hashesFileReader.ReadLine();
-                Assert.AreEqual(nameOfTestFile, hashesFileFirstLine);
+                string pathOfTestFile = TestingTools.CreateNewTestFile(pathOfTestFolder, NAME_OF_TEST_FILE);
                 string hashOfTestFile = HashingTools.ObtainFileHash(pathOfTestFile);
-                string? hashesFileSecondLine = hashesFileReader.ReadLine();
-                Assert.AreEqual(hashOfTestFile, hashesFileSecondLine);
-
-                // Tear down:
-                hashesFileReader.Close();
-                Directory.Delete(pathOfTestFolder, true);
-            }
-
-
-            [TestMethod()]
-            [Timeout(TestingTools.ONE_SECOND)]
-            public void GivenFolderContainingOneFileAndHashesFile_DisplayHashesFileCreated()
-            {
-                // Set up:
-                string pathOfTestFolder = TestingTools.CreateTestFolder(NAME_OF_TEST_FOLDER);
-                string pathOfTestFile = TestingTools.CreateNewTestFile(pathOfTestFolder, "File_Integrity_Utility_Test_File.txt");
-                CreateDummyHashesFileMeantToBeReplaced(pathOfTestFolder);
+                RenameAllTopLevelFilesInFolderAsTheirHash(pathOfTestFolder);
                 StringWriter consoleOutput = TestingTools.RerouteConsoleOutput();
 
                 // Execute:
                 LoadConsoleInputAndRunMethod(pathOfTestFolder);
 
                 // Assert:
-                string expectedDisplayedOutput = ENTER_FOLDER_PATH_PROMPT +
-                                                 "Generating hashes for all files in " + pathOfTestFolder + "...\r\n" +
-                                                 pathOfTestFile + "... DONE\r\n" +
-                                                 "All file hashes generated.\r\n\n" +
-                                                 "Writing file hashes to text file...\r\n" +
-                                                 "All file hashes written to text file.";
+                string expectedDisplayedOutput = ReturnEnterFolderPathPromptAndComparingFiles(pathOfTestFolder);
+                expectedDisplayedOutput += hashOfTestFile + ".txt = " + hashOfTestFile + ".txt\r\n\n" +
+                                           "Comparing files complete.\r\n\n" +
+                                           "Verdict:\r\n" +
+                                           "No inconsistency(s) found";
                 string actualDisplayedOutput = consoleOutput.ToString().Trim();
                 Assert.AreEqual(expectedDisplayedOutput, actualDisplayedOutput);
 
@@ -147,165 +92,43 @@ namespace File_Integrity_Utility.ProgramFiles.MenuOptions_Tests
             }
 
 
-            private static void CreateDummyHashesFileMeantToBeReplaced(string pathOfTestFolder)
+            private void RenameAllTopLevelFilesInFolderAsTheirHash(string pathOfTestFolder)
             {
-                // This is meant to be a placeholder hashes file, which should be replaced when the method we are testing is called.
-                TestingTools.CreateNewTestFile(pathOfTestFolder, "File SHA 256 Hashes.txt");
+                // The user is prompted to enter into the console the path of the folder.
+                // We pre-input this into the console so that it will be detected immediately after the prompt:
+                TestingTools.PreloadInputToConsole(pathOfTestFolder);
+                MenuOption4.RenameAllTopLevelFilesInGivenFolderAsTheirHash();
             }
 
 
             [TestMethod()]
             [Timeout(TestingTools.ONE_SECOND)]
-            public void GivenFolderContainingOneFileAndHashesFile_OldHashesFileReplacedAndUpdated()
+            public void GivenFolderContainingOneFileWhoseNameDoesNotMatchItsHash_DisplayInconsistenciesFound()
             {
                 // Set up:
                 string pathOfTestFolder = TestingTools.CreateTestFolder(NAME_OF_TEST_FOLDER);
-                string nameOfTestFile = "File_Integrity_Utility_Test_File.txt";
-                string pathOfTestFile = TestingTools.CreateNewTestFile(pathOfTestFolder, nameOfTestFile);
-                CreateDummyHashesFileMeantToBeReplaced(pathOfTestFolder);
-
-                // Execute:
-                LoadConsoleInputAndRunMethod(pathOfTestFolder);
-
-                // Assert:
-                string pathOfHashesFile = pathOfTestFolder + Path.DirectorySeparatorChar + "File SHA 256 Hashes.txt";
-                StreamReader hashesFileReader = File.OpenText(pathOfHashesFile);
-                string? hashesFileFirstLine = hashesFileReader.ReadLine();
-                Assert.AreEqual(nameOfTestFile, hashesFileFirstLine);
-                string hashOfTestFile = HashingTools.ObtainFileHash(pathOfTestFile);
-                string? hashesFileSecondLine = hashesFileReader.ReadLine();
-                Assert.AreEqual(hashOfTestFile, hashesFileSecondLine);
-
-                // Tear down:
-                hashesFileReader.Close();
-                Directory.Delete(pathOfTestFolder, true);
-            }
-
-
-            [TestMethod()]
-            [Timeout(TestingTools.ONE_SECOND)]
-            public void GivenFolderContainingTwoFilesWithSameHash_DisplayHashesFileCreated()
-            {
-                // Set up:
-                string pathOfTestFolder = TestingTools.CreateTestFolder(NAME_OF_TEST_FOLDER);
-                string pathOfOriginalTestFile = TestingTools.CreateNewTestFile(pathOfTestFolder, "File_Integrity_Utility_Original_Test_File.txt");
-                string pathOfCopyTestFile = pathOfTestFolder + Path.DirectorySeparatorChar + "File_Integrity_Utility_Copy_Test_File.txt";
-                File.Copy(pathOfOriginalTestFile, pathOfCopyTestFile, true);
+                string pathOfTestFile = TestingTools.CreateNewTestFile(pathOfTestFolder, NAME_OF_TEST_FILE);
+                string originalHashOfTestFile = HashingTools.ObtainFileHash(pathOfTestFile);
+                RenameAllTopLevelFilesInFolderAsTheirHash(pathOfTestFolder);
+                // We modify the test file so that its new hash will be different:
+                string newPathOfTestFile = pathOfTestFolder + Path.DirectorySeparatorChar + originalHashOfTestFile + ".txt";
+                File.AppendAllText(newPathOfTestFile, "blah");
+                string newHashOfTestFile = HashingTools.ObtainFileHash(newPathOfTestFile);
                 StringWriter consoleOutput = TestingTools.RerouteConsoleOutput();
 
                 // Execute:
                 LoadConsoleInputAndRunMethod(pathOfTestFolder);
 
                 // Assert:
-                string expectedDisplayedOutput = ENTER_FOLDER_PATH_PROMPT +
-                                                 "Generating hashes for all files in " + pathOfTestFolder + "...\r\n" +
-                                                 pathOfCopyTestFile + "... DONE\r\n" +
-                                                 pathOfOriginalTestFile + "... DONE\r\n" +
-                                                 "All file hashes generated.\r\n\n" +
-                                                 "Writing file hashes to text file...\r\n" +
-                                                 "All file hashes written to text file.";
+                string expectedDisplayedOutput = ReturnEnterFolderPathPromptAndComparingFiles(pathOfTestFolder);
+                expectedDisplayedOutput += originalHashOfTestFile + ".txt != " + newHashOfTestFile + ".txt\r\n\n" +
+                                           "Comparing files complete.\r\n\n" +
+                                           "Verdict:\r\n" +
+                                           "Inconsistency(s) found";
                 string actualDisplayedOutput = consoleOutput.ToString().Trim();
                 Assert.AreEqual(expectedDisplayedOutput, actualDisplayedOutput);
 
                 // Tear down:
-                Directory.Delete(pathOfTestFolder, true);
-            }
-
-
-            [TestMethod()]
-            [Timeout(TestingTools.ONE_SECOND)]
-            public void GivenFolderContainingTwoFilesWithSameHash_HashesFileCreated()
-            {
-                // Set up:
-                string pathOfTestFolder = TestingTools.CreateTestFolder(NAME_OF_TEST_FOLDER);
-                string nameOfOriginalTestFile = "File_Integrity_Utility_Original_Test_File.txt";
-                string pathOfOriginalTestFile = TestingTools.CreateNewTestFile(pathOfTestFolder, nameOfOriginalTestFile);
-                string nameOfCopyTestFile = "File_Integrity_Utility_Copy_Test_File.txt";
-                string pathOfCopyTestFile = pathOfTestFolder + Path.DirectorySeparatorChar + nameOfCopyTestFile;
-                File.Copy(pathOfOriginalTestFile, pathOfCopyTestFile, true);
-
-                // Execute:
-                LoadConsoleInputAndRunMethod(pathOfTestFolder);
-
-                // Assert:
-                string pathOfHashesFile = pathOfTestFolder + Path.DirectorySeparatorChar + "File SHA 256 Hashes.txt";
-                StreamReader hashesFileReader = File.OpenText(pathOfHashesFile);
-                string hashOfBothTestFiles = HashingTools.ObtainFileHash(pathOfOriginalTestFile);
-                AssertNextTwoLinesInHashesFileMatchFileNameAndHash(hashesFileReader, nameOfCopyTestFile, hashOfBothTestFiles);
-                // Each [file name, file hash] entry in the text file is spaced out with an empty line, so we must skip it:
-                hashesFileReader.ReadLine();
-                AssertNextTwoLinesInHashesFileMatchFileNameAndHash(hashesFileReader, nameOfOriginalTestFile, hashOfBothTestFiles);
-
-                // Tear down:
-                hashesFileReader.Close();
-                Directory.Delete(pathOfTestFolder, true);
-            }
-
-
-            private void AssertNextTwoLinesInHashesFileMatchFileNameAndHash(StreamReader hashesFileReader, string nameOfFile, string hashOfFile)
-            {
-                string? hashesFileFirstLine = hashesFileReader.ReadLine();
-                Assert.AreEqual(nameOfFile, hashesFileFirstLine);
-                string? hashesFileSecondLine = hashesFileReader.ReadLine();
-                Assert.AreEqual(hashOfFile, hashesFileSecondLine);
-            }
-
-
-            [TestMethod()]
-            [Timeout(TestingTools.ONE_SECOND)]
-            public void GivenFolderContainingMultipleFilesWithDifferentHashes_DisplayHashesFileCreated()
-            {
-                // Set up:
-                string pathOfTestFolder = TestingTools.CreateTestFolder(NAME_OF_TEST_FOLDER);
-                string[] listOfTestFileNames = TestingTools.CreateMultipleTestFilesWithDifferentContents(pathOfTestFolder, 5);
-                StringWriter consoleOutput = TestingTools.RerouteConsoleOutput();
-
-                // Execute:
-                LoadConsoleInputAndRunMethod(pathOfTestFolder);
-
-                // Assert:
-                string expectedDisplayedOutput = ENTER_FOLDER_PATH_PROMPT +
-                                                 "Generating hashes for all files in " + pathOfTestFolder + "...\r\n";
-                foreach (string currentFileName in listOfTestFileNames)
-                {
-                    expectedDisplayedOutput += pathOfTestFolder + Path.DirectorySeparatorChar + currentFileName + "... DONE\r\n";
-                }
-                expectedDisplayedOutput += "All file hashes generated.\r\n\n" +
-                                           "Writing file hashes to text file...\r\n" +
-                                           "All file hashes written to text file.";
-                string actualDisplayedOutput = consoleOutput.ToString().Trim();
-                Assert.AreEqual(expectedDisplayedOutput, actualDisplayedOutput);
-
-                // Tear down:
-                Directory.Delete(pathOfTestFolder, true);
-            }
-
-
-            [TestMethod()]
-            [Timeout(TestingTools.ONE_SECOND)]
-            public void GivenFolderContainingMultipleFilesWithDifferentHashes_HashesFileCreated()
-            {
-                // Set up:
-                string pathOfTestFolder = TestingTools.CreateTestFolder(NAME_OF_TEST_FOLDER);
-                string[] listOfTestFileNames = TestingTools.CreateMultipleTestFilesWithDifferentContents(pathOfTestFolder, 5);
-
-                // Execute:
-                LoadConsoleInputAndRunMethod(pathOfTestFolder);
-
-                // Assert:
-                string pathOfHashesFile = pathOfTestFolder + Path.DirectorySeparatorChar + "File SHA 256 Hashes.txt";
-                StreamReader hashesFileReader = File.OpenText(pathOfHashesFile);
-                foreach (string currentFileName in listOfTestFileNames)
-                {
-                    string currentFilePath = pathOfTestFolder + Path.DirectorySeparatorChar + currentFileName;
-                    string currentFileHash = HashingTools.ObtainFileHash(currentFilePath);
-                    AssertNextTwoLinesInHashesFileMatchFileNameAndHash(hashesFileReader, currentFileName, currentFileHash);
-                    // Each [file name, file hash] entry in the text file is spaced out with an empty line, so we must skip it:
-                    hashesFileReader.ReadLine();
-                }
-
-                // Tear down:
-                hashesFileReader.Close();
                 Directory.Delete(pathOfTestFolder, true);
             }
         }

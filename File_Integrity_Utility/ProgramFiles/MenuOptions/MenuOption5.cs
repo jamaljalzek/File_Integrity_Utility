@@ -2,55 +2,67 @@
 {
     public class MenuOption5
     {
-        public static void GenerateTextFileListingFileNamesToHashes()
+        public static void CompareNameOfEachTopLevelFileInGivenFolderToItsHash()
         {
             string pathOfFolder = ConsoleTools.ObtainFolderPathFromUser();
-            if (!DoesFolderContainTopLevelFiles(pathOfFolder))
+            string[] allTopLevelFilePathsInFolder = Directory.GetFiles(pathOfFolder);
+            bool wasInconsistencyFound = VerifyEachFileNameMatchesItsHash(allTopLevelFilePathsInFolder, pathOfFolder);
+            DisplayIfAllFilesAreConsistentOrNot(wasInconsistencyFound);
+        }
+
+
+        private static bool VerifyEachFileNameMatchesItsHash(string[] allTopLevelFilePathsInFolder, string pathOfFolder)
+        {
+            Console.WriteLine('\n' + "Comparing the name of each top level file in " + pathOfFolder + "to its hash...");
+            bool wasInconsistencyFound = CompareEachFileNameToItsHash(allTopLevelFilePathsInFolder);
+            ConsoleTools.WriteLineToConsoleInColor('\n' + "Comparing files complete.", ConsoleColor.Cyan);
+            return wasInconsistencyFound;
+        }
+
+
+        private static bool CompareEachFileNameToItsHash(string[] allTopLevelFilePathsInFolder)
+        {
+            bool wasInconsistencyFound = false;
+            foreach (string currentFilePath in allTopLevelFilePathsInFolder)
             {
-                ConsoleTools.WriteLineToConsoleInColor("\n\n" + "Error, given folder contains no top level files: hashes file not created.", ConsoleColor.Red);
-                return;
+                bool isCurrentFileConsistent = CompareFileNameToItsHash(currentFilePath);
+                if (!isCurrentFileConsistent)
+                {
+                    wasInconsistencyFound = true;
+                }
             }
-            string pathOfTextFileToBeCreated = pathOfFolder + Path.DirectorySeparatorChar + "File SHA 256 Hashes.txt";
-            // We will be replacing any already existing hashes text file with an up to date one.
-            // Also, we must delete it now (if any) to prevent unnecessarily hashing it:
-            File.Delete(pathOfTextFileToBeCreated);
-            List<string[]> listOfFilePathsToHashes = HashingTools.GetListOfFilePathsToHashes(pathOfFolder, SearchOption.TopDirectoryOnly);
-            StreamWriter textFileToWriteTo = File.CreateText(pathOfTextFileToBeCreated);
-            WriteListOfFileNamesToHashesToTextFile(listOfFilePathsToHashes, textFileToWriteTo);
-            textFileToWriteTo.Close();
+            return wasInconsistencyFound;
         }
 
 
-        private static bool DoesFolderContainTopLevelFiles(string pathOfFolder)
+        private static bool CompareFileNameToItsHash(string filePath)
         {
-            string[] listOfFilePaths = Directory.GetFiles(pathOfFolder, "*", SearchOption.TopDirectoryOnly);
-            return listOfFilePaths.Length > 0;
-        }
-
-
-        private static void WriteListOfFileNamesToHashesToTextFile(List<string[]> listOfFilePathsToHashes, StreamWriter textFileWriter)
-        {
-            Console.WriteLine("\n" + "Writing file hashes to text file...");
-            int lastIndex = listOfFilePathsToHashes.Count - 1;
-            for (int currentIndex = 0; currentIndex < lastIndex; ++currentIndex)
+            string fileNameWithExtension = Path.GetFileName(filePath);
+            string fileHashWithExtension = HashingTools.ObtainFileHash(filePath) + Path.GetExtension(filePath);
+            bool isFileNameConsistentWithHash = fileNameWithExtension.Equals(fileHashWithExtension);
+            if (isFileNameConsistentWithHash)
             {
-                string[] currentFilePathAndHash = listOfFilePathsToHashes[currentIndex];
-                AddFileNameAndHashToTextFile(currentFilePathAndHash, textFileWriter);
-                textFileWriter.Write("\n\n");
+                Console.WriteLine(fileNameWithExtension + " = " + fileHashWithExtension);
             }
-            string[] lastFilePathAndHash = listOfFilePathsToHashes[lastIndex];
-            AddFileNameAndHashToTextFile(lastFilePathAndHash, textFileWriter);
-            ConsoleTools.WriteLineToConsoleInColor("All file hashes written to text file.", ConsoleColor.Cyan);
+            else
+            {
+                ConsoleTools.WriteLineToConsoleInColor(fileNameWithExtension + " != " + fileHashWithExtension, ConsoleColor.Red);
+            }
+            return isFileNameConsistentWithHash;
         }
 
 
-        private static void AddFileNameAndHashToTextFile(string[] filePathAndHash, StreamWriter textFileToWriteTo)
+        private static void DisplayIfAllFilesAreConsistentOrNot(bool wasAnyInconsistencyFound)
         {
-            string filePath = filePathAndHash[0];
-            string fileName = Path.GetFileName(filePath);
-            textFileToWriteTo.WriteLine(fileName);
-            string fileHash = filePathAndHash[1];
-            textFileToWriteTo.Write(fileHash);
+            Console.WriteLine('\n' + "Verdict:");
+            if (wasAnyInconsistencyFound)
+            {
+                ConsoleTools.WriteLineToConsoleInColor("Inconsistency(s) found", ConsoleColor.Red);
+            }
+            else
+            {
+                ConsoleTools.WriteLineToConsoleInColor("No inconsistency(s) found", ConsoleColor.Green);
+            }
         }
     }
 }
